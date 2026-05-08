@@ -1,0 +1,13 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite' // 👈 1. ON IMPORTE LE PLUGIN V4
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(), // 👈 2. ON L'ACTIVE ICI
+  ],
+  server: {
+    allowedHosts: true, // 👈 3. ON AUTORISE LOCALTUNNEL ICI
+  }
+})
