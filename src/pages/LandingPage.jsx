@@ -36,7 +36,7 @@ export default function LandingPage() {
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
             {/* L'icône du logo */}
             <img 
-              src="/petit logo.png" 
+              src="/petit-logo.png" 
               alt="Icône MyBudget" 
               className="h-10 md:h-12 w-auto object-contain" 
             />
