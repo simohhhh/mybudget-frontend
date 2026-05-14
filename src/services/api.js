@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // configuration d'axios
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api', 
+  baseURL: 'https://mybudget-backend-seven.vercel.app/api', 
 });
 
 // intercepteur pour attacher le token JWT aux requetes
