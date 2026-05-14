@@ -31,6 +31,11 @@ function Transactions() {
   const [editingTx, setEditingTx] = useState(null);
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
 
+  // --- NOUVEAUX ÉTATS POUR L'IA VOCALE ---
+  const [isListening, setIsListening] = useState(false);
+  const [isProcessingVoice, setIsProcessingVoice] = useState(false);
+  const [transcript, setTranscript] = useState('');
+
   // Stocker la date d'aujourd'hui pour bloquer le futur
   const todayString = new Date().toISOString().split('T')[0];
 
@@ -78,6 +83,94 @@ function Transactions() {
     setEditingTx({ ...editingTx, date: date.toISOString().split('T')[0] });
   };
 
+  // --- NOUVELLES FONCTIONS IA VOCALE (TTS & STT) ---
+  const parler = (texte) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(texte);
+      utterance.lang = i18n.language === 'en' ? 'en-US' : 'fr-FR'; 
+      utterance.rate = 1.1; 
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  // 1. Envoyer le texte finalisé à votre backend (Gemini)
+  const envoyerTexteA_IA = async (texteReconnu) => {
+    setIsListening(false);
+    setIsProcessingVoice(true);
+
+    try {
+      const categoriesReduites = categories.map(c => ({ _id: c._id, nom: c.nom }));
+      
+      const response = await api.post('/transactions/analyze-voice', {
+        texte: texteReconnu,
+        categoriesDisponibles: categoriesReduites
+      });
+
+      const extractedData = response.data;
+      setFormData(prev => ({ ...prev, ...extractedData }));
+
+      parler(`J'ai préparé la transaction : ${extractedData.titre} pour ${extractedData.montant} dirhams.`);
+      MySwal.fire({ icon: 'success', title: 'Succès', text: 'Champs remplis par la voix !', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+
+    } catch (error) {
+      parler("Désolé, je n'ai pas pu analyser votre demande.");
+      MySwal.fire({ icon: 'error', title: 'Erreur IA', text: 'Impossible de traiter la demande vocale.' });
+    } finally {
+      setIsProcessingVoice(false);
+      setTimeout(() => setTranscript(''), 4000); // Efface le texte après 4 secondes
+    }
+  };
+
+  // 2. Gérer le micro et l'affichage en temps réel
+  const handleVoiceInput = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      MySwal.fire({ icon: 'error', title: 'Erreur', text: "Votre navigateur ne supporte pas la reconnaissance vocale." });
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = i18n.language === 'en' ? 'en-US' : 'fr-FR';
+    
+    // 💡 LA MAGIE EST ICI : On active les résultats en temps réel
+    recognition.interimResults = true; 
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setTranscript(''); // On vide le texte précédent
+    };
+
+    recognition.onresult = (event) => {
+      let texteEnCours = '';
+      let estFini = false;
+
+      // On assemble les morceaux de la phrase en direct
+      for (let i = 0; i < event.results.length; i++) {
+        texteEnCours += event.results[i][0].transcript;
+        if (event.results[i].isFinal) estFini = true;
+      }
+
+      // On met à jour l'interface React en temps réel
+      setTranscript(texteEnCours);
+
+      // Si l'utilisateur a fini de parler, on envoie à l'IA
+      if (estFini) {
+        recognition.stop();
+        envoyerTexteA_IA(texteEnCours);
+      }
+    };
+
+    recognition.onerror = (event) => {
+      setIsListening(false);
+      console.error("Erreur micro:", event.error);
+    };
+
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+  };
   // --- AJOUTER ---
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -217,9 +310,33 @@ function Transactions() {
               <div className="lg:col-span-5 flex flex-col min-h-0">
                 <div className="bg-white dark:bg-slate-800 p-6 xl:p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex-1 flex flex-col relative z-20">
                   
+                  {/* --- NOUVEAU BOUTON MICROPHONE INTÉGRÉ ICI --- */}
                   <div className="flex justify-between items-center mb-4 shrink-0">
                     <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">{t('transactions.newTitle', 'Nouvelle transaction')}</h2>
+                    <button 
+                      type="button" 
+                      onClick={handleVoiceInput}
+                      disabled={isProcessingVoice}
+                      className={`p-3 rounded-full transition-all shadow-md flex items-center justify-center
+                        ${isListening 
+                          ? 'bg-rose-500 text-white animate-pulse' 
+                          : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 hover:bg-blue-200'} 
+                        ${isProcessingVoice ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      title={t('transactions.voiceBtnTitle', 'Ajouter par la voix')}
+                    >
+                      <Mic size={20} className={isListening ? 'animate-bounce' : ''} />
+                    </button>
                   </div>
+                  {/* --- NOUVEAU : AFFICHAGE DE LA PAROLE EN DIRECT --- */}
+                  {transcript && (
+                    <div className="mb-4 p-4 bg-blue-50 dark:bg-slate-700/50 rounded-xl border border-blue-100 dark:border-slate-600 flex items-center gap-3 animate-fade-in shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-300 italic">
+                        "{transcript}"
+                        {isProcessingVoice && <span className="ml-1 text-blue-500 font-bold not-italic">... Analyse par l'IA en cours</span>}
+                      </p>
+                    </div>
+                  )}
 
                   {status.message && (
                     <div className={`p-3 rounded-xl mb-4 text-sm font-medium shrink-0 ${status.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400'}`}>
@@ -306,7 +423,6 @@ function Transactions() {
 
                     <div>
                       <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.descLabel', 'Description')}</label>
-                      {/* 💡 CORRECTIONS APPORTÉES ICI : h-24, custom-scrollbar, break-all */}
                       <textarea 
                         placeholder={t('transactions.descPlaceholder', 'Ajoutez des détails')} 
                         className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition resize-none h-24 text-slate-800 dark:text-white text-sm custom-scrollbar break-all" 
@@ -457,7 +573,6 @@ function Transactions() {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.descLabel', 'Description')}</label>
-                  {/* 💡 CORRECTIONS APPORTÉES ICI AUSSI : h-24, custom-scrollbar, break-all */}
                   <textarea 
                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition resize-none h-24 text-slate-800 dark:text-white text-sm custom-scrollbar break-all" 
                     value={editingTx.description} 

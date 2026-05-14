@@ -132,7 +132,7 @@ function Support() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{t('support.phoneLabel', 'Téléphone')}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">+212 6 00 00 00 00</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">+212 6 84702108</p>
                       </div>
                     </a>
                   </div>
