@@ -219,7 +219,7 @@ function Profile() {
     <div className="h-screen overflow-hidden bg-[#f4f7fb] dark:bg-slate-900 flex font-sans transition-colors duration-300">
       <Sidebar />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        <header className="h-20 shrink-0 px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900">
+        <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('profile.title', 'Mon Profil')}</h1>
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -245,7 +245,7 @@ function Profile() {
           </div>
         </header>
 
-        <div className="flex-1 px-8 pb-12 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 px-4 md:px-8 pb-12 overflow-y-auto custom-scrollbar">
           <div className="max-w-[1400px] mx-auto mt-4">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
               

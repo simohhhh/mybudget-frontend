@@ -298,11 +298,11 @@ function Transactions() {
         <Sidebar />
         
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-          <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 px-8 flex justify-between items-center">
+          <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 pl-16 pr-4 md:px-8 flex justify-between items-center">
             <h1 className="text-2xl font-bold">{t('transactions.pageTitle', 'Saisie des transactions')}</h1>
           </header>
 
-          <div className="flex-1 px-8 pb-8 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
+          <div className="flex-1 px-4 md:px-8 pb-8 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
             
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
               

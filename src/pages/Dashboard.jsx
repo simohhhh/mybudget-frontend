@@ -229,7 +229,7 @@ function Dashboard() {
         <Sidebar />
 
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          <header className="h-20 shrink-0 px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900 transition-colors duration-300">
+          <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900 transition-colors duration-300">
             
             <div className="flex items-center gap-4">
               <button onClick={() => navigate('/Transactions')} className="bg-slate-900 dark:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm hover:bg-slate-800 dark:hover:bg-blue-700 transition">
@@ -259,7 +259,7 @@ function Dashboard() {
             </div>
           </header>
 
-          <div className="flex-1 px-8 pb-6 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
+          <div className="flex-1 px-4 md:px-8 pb-6 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
             <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors duration-300">
               <div className="flex gap-1 overflow-x-auto w-full md:w-auto p-1">
                 {['day', 'week', 'month', 'year', 'all'].map((filter) => {

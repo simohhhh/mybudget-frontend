@@ -75,7 +75,7 @@ function Support() {
       
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         {/* En-tête */}
-        <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 px-8 flex justify-between items-center">
+        <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 pl-16 pr-4 md:px-8 flex justify-between items-center">
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <LifeBuoy className="text-blue-600 dark:text-blue-400" size={24} />
             {t('support.pageTitle', 'Support & Assistance')}

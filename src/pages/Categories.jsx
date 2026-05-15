@@ -148,11 +148,11 @@ function Categories() {
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         
         {/* 💡 HEADER EPURÉ (Sans boutons langue ni thème) */}
-        <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 px-8 flex justify-between items-center transition-colors duration-300">
+        <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 pl-16 pr-4 md:px-8 flex justify-between items-center transition-colors duration-300">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('categories.pageTitle', 'Paramètres des Catégories')}</h1>
         </header>
 
-        <div className="flex-1 px-8 pb-8 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
+        <div className="flex-1 px-4 md:px-8 pb-8 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
           {status.message && (
             <div className={`shrink-0 flex items-center gap-2 p-4 rounded-xl mb-6 text-sm font-medium ${status.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400'}`}>
               {status.type === 'success' ? <CheckCircle2 size={18}/> : <AlertCircle size={18}/>}
