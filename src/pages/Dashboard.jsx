@@ -259,7 +259,7 @@ function Dashboard() {
             </div>
           </header>
 
-          <div className="flex-1 px-4 md:px-8 pb-6 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
+          <div className="flex-1 px-4 md:px-8 pb-6 max-w-[1600px] w-full mx-auto overflow-y-auto flex flex-col min-h-0">
             <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors duration-300">
               <div className="flex gap-1 overflow-x-auto w-full md:w-auto p-1">
                 {['day', 'week', 'month', 'year', 'all'].map((filter) => {
@@ -288,7 +288,7 @@ function Dashboard() {
               )}
             </div>
 
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-0">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-20">
 
               {/* stats revenus */}
               <div className="flex flex-col gap-4 min-h-0">

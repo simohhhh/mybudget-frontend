@@ -302,9 +302,9 @@ function Transactions() {
             <h1 className="text-2xl font-bold">{t('transactions.pageTitle', 'Saisie des transactions')}</h1>
           </header>
 
-          <div className="flex-1 px-4 md:px-8 pb-8 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
+          <div className="flex-1 px-4 md:px-8 pb-8 max-w-[1600px] w-full mx-auto overflow-y-auto flex flex-col min-h-0">
             
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-20">
               
               {/* === FORMULAIRE D'AJOUT (Gauche) === */}
               <div className="lg:col-span-5 flex flex-col min-h-0">
@@ -345,12 +345,12 @@ function Transactions() {
                   )}
 
                   <form onSubmit={handleSubmit} className="space-y-3 flex-1 flex flex-col justify-between">
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                       <div className="flex-1">
                         <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.amount', 'Montant (DH)')}</label>
                         <input type="number" placeholder="0.00" required step="0.01" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition text-xl font-bold text-slate-800 dark:text-white" value={formData.montant} onChange={(e) => setFormData({...formData, montant: e.target.value})} />
                       </div>
-                      <div className="w-1/3 flex flex-col">
+                      <div className="w-full sm:w-1/3 flex flex-col">
                         <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.type', 'Type')}</label>
                         <div className="flex bg-slate-50 dark:bg-slate-700/50 p-1 rounded-xl border border-slate-200 dark:border-slate-600 flex-1 min-h-[48px]">
                           <button type="button" onClick={() => setFormData({...formData, type: 'depense'})} className={`flex-1 rounded-lg text-sm font-bold transition-all ${formData.type === 'depense' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.expense', 'Dépense')}</button>

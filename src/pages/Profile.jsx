@@ -107,7 +107,7 @@ function Profile() {
             inputAttributes: { maxlength: 6, placeholder: '123456' },
             customClass: {
                 popup: 'bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-xl',
-                input: 'text-center text-2xl tracking-widest font-bold bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-600 text-slate-900 dark:text-white outline-none py-4',
+                input: 'text-center text-2xl tracking-widest font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-600 text-slate-900 dark:text-white outline-none py-4',
                 confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl px-6 py-3 transition-colors w-full',
                 cancelButton: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl px-6 py-3 mt-2 w-full hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors',
                 validationMessage: 'text-rose-500 font-bold text-sm mt-3 bg-rose-50 dark:bg-rose-900/30 p-2 rounded-lg'
@@ -231,7 +231,7 @@ function Profile() {
                   <div className="fixed inset-0 z-10" onClick={() => setIsLangOpen(false)}></div>
                   <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-lg rounded-2xl overflow-hidden z-20 animate-fade-in py-1">
                     {languages.map((lng) => (
-                      <button key={lng.code} onClick={() => { i18n.changeLanguage(lng.code); setIsLangOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-2 text-sm font-bold transition-colors ${currentLangObj.code === lng.code ? 'bg-slate-50 dark:bg-slate-700/50 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}>
+                      <button key={lng.code} onClick={() => { i18n.changeLanguage(lng.code); setIsLangOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-2 text-sm font-bold transition-colors ${currentLangObj.code === lng.code ? 'bg-slate-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <span className="text-sm font-extrabold text-slate-400">{lng.flag}</span><span>{lng.label}</span>
                       </button>
                     ))}
@@ -267,11 +267,11 @@ function Profile() {
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2 ml-1">{t('profile.fullName', 'Nom complet')}</label>
-                      <input type="text" value={utilisateur.nom} onChange={(e) => setUtilisateur({...utilisateur, nom: e.target.value})} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600/50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white font-medium transition-all" required />
+                      <input type="text" value={utilisateur.nom} onChange={(e) => setUtilisateur({...utilisateur, nom: e.target.value})} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600/50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white font-medium transition-all" required />
                     </div>
                     <div>
                       <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2 ml-1">{t('profile.emailAddress', 'Adresse Email')}</label>
-                      <input type="email" value={utilisateur.email} onChange={(e) => setUtilisateur({...utilisateur, email: e.target.value})} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600/50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white font-medium transition-all" required />
+                      <input type="email" value={utilisateur.email} onChange={(e) => setUtilisateur({...utilisateur, email: e.target.value})} className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600/50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white font-medium transition-all" required />
                     </div>
                   </div>
                   <div className="mt-auto pt-8 flex justify-end">
@@ -298,7 +298,7 @@ function Profile() {
                         <button type="button" onClick={handleMotDePasseOublieDirect} className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors">{t('profile.forgotPassword', 'Oublié ?')}</button>
                       </div>
                       <div className="relative">
-                        <input type={afficherActuel ? "text" : "password"} required value={motsDePasse.actuel} onChange={(e) => setMotsDePasse({...motsDePasse, actuel: e.target.value})} className="w-full px-5 py-3.5 pr-12 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600/50 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 dark:text-white transition-all" />
+                        <input type={afficherActuel ? "text" : "password"} required value={motsDePasse.actuel} onChange={(e) => setMotsDePasse({...motsDePasse, actuel: e.target.value})} className="w-full px-5 py-3.5 pr-12 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600/50 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 dark:text-white transition-all" />
                         <button type="button" onClick={() => setAfficherActuel(!afficherActuel)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-500 transition-colors">{afficherActuel ? <EyeOff size={18} /> : <Eye size={18} />}</button>
                       </div>
                     </div>
@@ -306,14 +306,14 @@ function Profile() {
                       <div>
                           <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2 ml-1">{t('profile.newPassword', 'Nouveau')}</label>
                           <div className="relative">
-                              <input type={afficherNouveau ? "text" : "password"} required value={motsDePasse.nouveau} onChange={(e) => setMotsDePasse({...motsDePasse, nouveau: e.target.value})} className="w-full px-5 py-3.5 pr-12 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600/50 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 dark:text-white transition-all" />
+                              <input type={afficherNouveau ? "text" : "password"} required value={motsDePasse.nouveau} onChange={(e) => setMotsDePasse({...motsDePasse, nouveau: e.target.value})} className="w-full px-5 py-3.5 pr-12 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600/50 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 text-slate-800 dark:text-white transition-all" />
                               <button type="button" onClick={() => setAfficherNouveau(!afficherNouveau)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-500 transition-colors">{afficherNouveau ? <EyeOff size={18} /> : <Eye size={18} />}</button>
                           </div>
                       </div>
                       <div>
                           <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2 ml-1">{t('profile.confirmPassword', 'Confirmer')}</label>
                           <div className="relative">
-                              <input type={afficherConfirmer ? "text" : "password"} required value={motsDePasse.confirmer} onChange={(e) => setMotsDePasse({...motsDePasse, confirmer: e.target.value})} className={`w-full px-5 py-3.5 pr-12 bg-slate-50 dark:bg-slate-900/50 border rounded-xl outline-none transition-all focus:ring-2 text-slate-800 dark:text-white ${motsDePasse.confirmer && motsDePasse.nouveau !== motsDePasse.confirmer ? 'border-rose-500 focus:ring-rose-500' : 'border-slate-200 dark:border-slate-600/50 focus:ring-amber-500'}`} />
+                              <input type={afficherConfirmer ? "text" : "password"} required value={motsDePasse.confirmer} onChange={(e) => setMotsDePasse({...motsDePasse, confirmer: e.target.value})} className={`w-full px-5 py-3.5 pr-12 bg-slate-50 dark:bg-slate-900 border rounded-xl outline-none transition-all focus:ring-2 text-slate-800 dark:text-white ${motsDePasse.confirmer && motsDePasse.nouveau !== motsDePasse.confirmer ? 'border-rose-500 focus:ring-rose-500' : 'border-slate-200 dark:border-slate-600/50 focus:ring-amber-500'}`} />
                               <button type="button" onClick={() => setAfficherConfirmer(!afficherConfirmer)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-500 transition-colors">{afficherConfirmer ? <EyeOff size={18} /> : <Eye size={18} />}</button>
                           </div>
                       </div>
@@ -345,7 +345,7 @@ function Profile() {
                   </div>
                   <div className="bg-white dark:bg-slate-800 p-6 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex items-center justify-between transition-all">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 rounded-2xl">
+                      <div className="p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl">
                         <LogOut size={24} />
                       </div>
                       <div>
