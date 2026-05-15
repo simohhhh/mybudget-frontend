@@ -27,7 +27,7 @@ function App() {
         <Route path="/Login" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <Login />} />
         <Route path="/Register" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <Register />} />
         <Route path="/ForgotPassword" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <ForgotPassword />} />
-        <Route path="/ResetPassword/:token" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <ResetPassword />} />
+        <Route path="/reset-password/:token" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <ResetPassword />} />
 
         {/* ==========================================
             ROUTES PRIVÉES
