@@ -65,7 +65,7 @@ function Sidebar() {
       {isOpen && (
         <div 
           onClick={() => setIsOpen(false)} 
-          className="lg:hidden fixed inset-0 bg-slate-900/50 z-40 backdrop-blur-sm"
+          className="lg:hidden fixed inset-0 bg-slate-900/50 z-40"
         ></div>
       )}
 
