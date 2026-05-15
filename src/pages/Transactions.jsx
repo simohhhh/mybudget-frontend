@@ -93,7 +93,6 @@ function Transactions() {
     }
   };
 
-  // 1. Envoyer le texte finalisé à votre backend (Gemini)
   const envoyerTexteA_IA = async (texteReconnu) => {
     setIsListening(false);
     setIsProcessingVoice(true);
@@ -117,11 +116,10 @@ function Transactions() {
       MySwal.fire({ icon: 'error', title: 'Erreur IA', text: 'Impossible de traiter la demande vocale.' });
     } finally {
       setIsProcessingVoice(false);
-      setTimeout(() => setTranscript(''), 4000); // Efface le texte après 4 secondes
+      setTimeout(() => setTranscript(''), 4000); 
     }
   };
 
-  // 2. Gérer le micro et l'affichage en temps réel
   const handleVoiceInput = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     
@@ -132,30 +130,25 @@ function Transactions() {
 
     const recognition = new SpeechRecognition();
     recognition.lang = i18n.language === 'en' ? 'en-US' : 'fr-FR';
-    
-    // 💡 LA MAGIE EST ICI : On active les résultats en temps réel
     recognition.interimResults = true; 
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
       setIsListening(true);
-      setTranscript(''); // On vide le texte précédent
+      setTranscript(''); 
     };
 
     recognition.onresult = (event) => {
       let texteEnCours = '';
       let estFini = false;
 
-      // On assemble les morceaux de la phrase en direct
       for (let i = 0; i < event.results.length; i++) {
         texteEnCours += event.results[i][0].transcript;
         if (event.results[i].isFinal) estFini = true;
       }
 
-      // On met à jour l'interface React en temps réel
       setTranscript(texteEnCours);
 
-      // Si l'utilisateur a fini de parler, on envoie à l'IA
       if (estFini) {
         recognition.stop();
         envoyerTexteA_IA(texteEnCours);
@@ -168,10 +161,9 @@ function Transactions() {
     };
 
     recognition.onend = () => setIsListening(false);
-
     recognition.start();
   };
-  // --- AJOUTER ---
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ type: '', message: '' });
@@ -194,7 +186,6 @@ function Transactions() {
     }
   };
 
-  // --- MODIFIER ---
   const handleEditClick = (tx) => {
     setEditingTx({
       ...tx,
@@ -225,7 +216,6 @@ function Transactions() {
     }
   };
 
-  // --- SUPPRIMER ---
   const handleDelete = (id) => {
     const isDark = document.documentElement.classList.contains('dark');
     
@@ -298,19 +288,19 @@ function Transactions() {
         <Sidebar />
         
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
-          <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 pl-16 pr-4 md:px-8 flex justify-between items-center">
+          <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900">
             <h1 className="text-2xl font-bold">{t('transactions.pageTitle', 'Saisie des transactions')}</h1>
           </header>
 
-          <div className="flex-1 px-4 md:px-8 pb-8 max-w-[1600px] w-full mx-auto overflow-y-auto flex flex-col min-h-0">
+          {/* 💡 CORRECTION SCROLL : overflow-y-auto et pb-24 ajoutés */}
+          <div className="flex-1 px-4 md:px-8 pb-24 max-w-[1600px] w-full mx-auto overflow-y-auto flex flex-col">
             
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               
               {/* === FORMULAIRE D'AJOUT (Gauche) === */}
-              <div className="lg:col-span-5 flex flex-col min-h-0">
-                <div className="bg-white dark:bg-slate-800 p-6 xl:p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex-1 flex flex-col relative z-20">
+              <div className="lg:col-span-5 flex flex-col">
+                <div className="bg-white dark:bg-slate-800 p-6 xl:p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col relative z-20">
                   
-                  {/* --- NOUVEAU BOUTON MICROPHONE INTÉGRÉ ICI --- */}
                   <div className="flex justify-between items-center mb-4 shrink-0">
                     <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">{t('transactions.newTitle', 'Nouvelle transaction')}</h2>
                     <button 
@@ -327,7 +317,7 @@ function Transactions() {
                       <Mic size={20} className={isListening ? 'animate-bounce' : ''} />
                     </button>
                   </div>
-                  {/* --- NOUVEAU : AFFICHAGE DE LA PAROLE EN DIRECT --- */}
+                  
                   {transcript && (
                     <div className="mb-4 p-4 bg-blue-50 dark:bg-slate-700/50 rounded-xl border border-blue-100 dark:border-slate-600 flex items-center gap-3 animate-fade-in shrink-0">
                       <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
@@ -344,7 +334,8 @@ function Transactions() {
                     </div>
                   )}
 
-                  <form onSubmit={handleSubmit} className="space-y-3 flex-1 flex flex-col justify-between">
+                  <form onSubmit={handleSubmit} className="space-y-3 flex flex-col justify-between">
+                    {/* 💡 CORRECTION FLEX-COL : Adaptation sur mobile */}
                     <div className="flex flex-col sm:flex-row gap-4">
                       <div className="flex-1">
                         <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.amount', 'Montant (DH)')}</label>
@@ -431,7 +422,7 @@ function Transactions() {
                       />
                     </div>
 
-                    <button type="submit" className="mt-auto w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm">
+                    <button type="submit" className="mt-6 w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm">
                       {t('transactions.addBtn', 'Ajouter')} {formData.montant ? `${formData.montant} DH` : ''}
                     </button>
                   </form>
@@ -439,8 +430,8 @@ function Transactions() {
               </div>
 
               {/* === HISTORIQUE DES TRANSACTIONS (Droite) === */}
-              <div className="lg:col-span-7 flex flex-col min-h-0">
-                <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex-1 flex flex-col min-h-0 relative z-10">
+              <div className="lg:col-span-7 flex flex-col">
+                <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col relative z-10 min-h-[500px]">
                   
                   <div className="flex justify-between items-center mb-8 gap-4 shrink-0">
                     <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">{t('transactions.history', 'Historique Complet')}</h2>

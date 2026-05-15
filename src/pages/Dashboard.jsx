@@ -11,7 +11,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'; 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const MySwal = withReactContent(Swal);
@@ -19,8 +19,8 @@ const MySwal = withReactContent(Swal);
 function Dashboard() {
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useTheme();
-  const { t, i18n } = useTranslation();
-
+  const { t, i18n } = useTranslation(); 
+  
   const [allTransactions, setAllTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,15 +31,6 @@ function Dashboard() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
   });
-
-  // --- UI State pour le Language Switcher (FR / EN uniquement) ---
-  const [isLangOpen, setIsLangOpen] = useState(false);
-  const languages = [
-    { code: 'fr', label: 'Français', flag: 'FR' },
-    { code: 'en', label: 'English', flag: 'GB' }
-  ];
-
-  const currentLangObj = languages.find(l => l.code === i18n.language?.substring(0, 2)) || languages[0];
 
   const fetchDashboardData = async () => {
     try {
@@ -58,17 +49,16 @@ function Dashboard() {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
       .format(montant).replace('$', '') + ' MAD';
   };
-  // 👇 NOUVELLE FONCTION À AJOUTER ICI 👇
+
   const formatDeviseCompact = (montant) => {
-    // Si le montant dépasse 100 000, on utilise le format compact (K, M, B, T)
     if (Math.abs(montant) >= 100000) {
-      return new Intl.NumberFormat('en-US', {
-        notation: "compact",
-        compactDisplay: "short",
-        maximumFractionDigits: 1
+      return new Intl.NumberFormat('en-US', { 
+        notation: "compact", 
+        compactDisplay: "short", 
+        maximumFractionDigits: 1 
       }).format(montant) + ' MAD';
     }
-    return formatDevise(montant); // Sinon on garde l'affichage normal
+    return formatDevise(montant);
   };
 
   const formaterDateCourte = (dateString) => {
@@ -230,50 +220,47 @@ function Dashboard() {
 
         <div className="flex-1 flex flex-col h-full overflow-hidden">
           <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900 transition-colors duration-300">
-
-            <div className="flex items-center gap-2 md:gap-4">
-              {/* BOUTON AJOUTER (Texte masqué sur mobile) */}
-              <button onClick={() => navigate('/Transactions')} className="bg-slate-900 dark:bg-blue-600 text-white px-3 md:px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center shadow-sm hover:bg-slate-800 dark:hover:bg-blue-700 transition">
-                <PlusCircle size={18} />
-                <span className="hidden sm:inline ml-2">{t('header.add', 'Ajouter')}</span>
+            
+            <div className="flex items-center gap-4">
+              <button onClick={() => navigate('/Transactions')} className="bg-slate-900 dark:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm hover:bg-slate-800 dark:hover:bg-blue-700 transition">
+                <PlusCircle size={16} /> <span className="hidden sm:inline ml-2">{t('header.add', 'Ajouter')}</span>
               </button>
 
-              {/* SÉLECTEUR DE MOIS ET RAPPORT (Texte masqué sur mobile) */}
               <div className="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden transition-colors">
-                <div className="px-2 md:px-3 border-r border-slate-200 dark:border-slate-700">
-                  <input type="month" value={reportMonth} onChange={(e) => setReportMonth(e.target.value)} className="bg-transparent border-none text-[11px] md:text-sm font-bold text-slate-700 dark:text-slate-200 outline-none py-2 cursor-pointer w-24 md:w-auto" />
+                <div className="px-3 border-r border-slate-200 dark:border-slate-700">
+                  <input type="month" value={reportMonth} onChange={(e) => setReportMonth(e.target.value)} className="bg-transparent border-none text-[11px] md:text-sm font-bold text-slate-700 dark:text-slate-200 outline-none py-2 cursor-pointer" />
                 </div>
                 <button onClick={genererRapportMensuel} className="flex items-center justify-center p-2.5 md:px-4 md:py-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold transition-colors" title="Générer le rapport">
-                  <Download size={18} />
+                  <Download size={18} /> 
                   <span className="hidden sm:inline ml-2 text-sm">Rapport</span>
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-3">
-              {/* DARK MODE TOGGLE (Texte masqué sur mobile) */}
-              <div onClick={toggleDarkMode} className="flex items-center gap-3 px-3 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
+            <div className="flex items-center gap-3">
+              <div onClick={toggleDarkMode} className="flex items-center gap-3 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
                 <span className="text-sm hidden sm:block">{t('header.darkMode', 'Mode Sombre')}</span>
                 {isDarkMode ? <Sun size={18} className="text-amber-500" /> : <Moon size={18} className="text-indigo-500" />}
               </div>
             </div>
           </header>
 
-          <div className="flex-1 px-4 md:px-8 pb-6 max-w-[1600px] w-full mx-auto overflow-y-auto flex flex-col min-h-0">
+          {/* 💡 CORRECTION SCROLL : overflow-y-auto et pb-24 */}
+          <div className="flex-1 px-4 md:px-8 pb-24 max-w-[1600px] w-full mx-auto overflow-y-auto flex flex-col">
             <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors duration-300">
               <div className="flex gap-1 overflow-x-auto w-full md:w-auto p-1">
                 {['day', 'week', 'month', 'year', 'all'].map((filter) => {
-                  // 💡 CORRECTION DU BUG ICI : 'day' pointe vers la clé 'today' du JSON
                   const jsonKey = filter === 'day' ? 'today' : filter;
                   const fallbackTxt = filter === 'day' ? "Aujourd'hui" : filter === 'week' ? 'Semaine' : filter === 'month' ? 'Ce mois' : filter === 'year' ? 'Cette année' : 'Tout';
-
+                  
                   return (
-                    <button key={filter} onClick={() => { setTimeFilter(filter); setShowCustomPicker(false); }} className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all whitespace-nowrap ${timeFilter === filter ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'}`}>
-                      {t(`filters.${jsonKey}`, fallbackTxt)}
+                    /* 💡 CORRECTION WHITESPACE-NOWRAP : Empêche le texte de se couper sur mobile */
+                    <button key={filter} onClick={() => { setTimeFilter(filter); setShowCustomPicker(false); }} className={`px-4 py-2 rounded-xl text-sm font-bold capitalize whitespace-nowrap transition-all ${timeFilter === filter ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'}`}>
+                      {t(`filters.${jsonKey}`, fallbackTxt)} 
                     </button>
                   )
                 })}
-                <button onClick={() => { setTimeFilter('custom'); setShowCustomPicker(true); }} className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap ${timeFilter === 'custom' ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'}`}>
+                <button onClick={() => { setTimeFilter('custom'); setShowCustomPicker(true); }} className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all flex items-center gap-2 ${timeFilter === 'custom' ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'}`}>
                   <Calendar size={16} /> {t('filters.custom', 'Personnalisée')}
                 </button>
               </div>
@@ -288,10 +275,11 @@ function Dashboard() {
               )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-20">
-
+            {/* 💡 CORRECTION GRID : flex-1 et min-h-0 retirés */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
               {/* stats revenus */}
-              <div className="flex flex-col gap-4 min-h-0">
+              <div className="flex flex-col gap-4">
                 <div className="shrink-0 bg-white dark:bg-slate-800 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-slate-700 dark:text-slate-200">{t('dashboard.income', 'Revenus')}</h3>
@@ -299,14 +287,14 @@ function Dashboard() {
                   <div className="relative h-40 flex justify-center">
                     <Doughnut data={doughnutRevenus} options={optionsDoughnut} />
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                      <span className="text-xl font-bold text-emerald-500 dark:text-emerald-400 w-full px-4 text-center truncate" title={formatDevise(totalRevenus)}>{formatDeviseCompact(totalRevenus)}
+                      <span className="text-xl font-bold text-emerald-500 dark:text-emerald-400 w-full px-4 text-center truncate" title={formatDevise(totalRevenus)}>{formatDeviseCompact(totalRevenus)} 
                       </span>
                     </div>
                   </div>
                 </div>
 
                 {/* DETAILS REVENUS */}
-                <div className="flex-1 flex flex-col min-h-0 bg-white dark:bg-slate-800 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
+                <div className="flex flex-col bg-white dark:bg-slate-800 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors h-64">
                   <div className="shrink-0 flex justify-between items-center mb-4"><h3 className="font-bold text-slate-700 dark:text-slate-200">{t('dashboard.incomeDetails', 'Détails Revenus')}</h3></div>
                   <div className="flex-1 overflow-y-auto pr-3 custom-scrollbar space-y-4">
                     {revenusData.map((cat, idx) => {
@@ -324,7 +312,7 @@ function Dashboard() {
               </div>
 
               {/* stats depenses */}
-              <div className="flex flex-col gap-4 min-h-0">
+              <div className="flex flex-col gap-4">
                 <div className="shrink-0 bg-white dark:bg-slate-800 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-slate-700 dark:text-slate-200">{t('dashboard.expenses', 'Dépenses')}</h3>
@@ -339,7 +327,7 @@ function Dashboard() {
                 </div>
 
                 {/* DETAILS DEPENSES */}
-                <div className="flex-1 flex flex-col min-h-0 bg-white dark:bg-slate-800 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
+                <div className="flex flex-col bg-white dark:bg-slate-800 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors h-64">
                   <div className="shrink-0 flex justify-between items-center mb-4"><h3 className="font-bold text-slate-700 dark:text-slate-200">{t('dashboard.expensesDetails', 'Détails Dépenses')}</h3></div>
                   <div className="flex-1 overflow-y-auto pr-3 custom-scrollbar space-y-4">
                     {depensesData.map((cat, idx) => {
@@ -357,7 +345,7 @@ function Dashboard() {
               </div>
 
               {/* solde global et liste des transactions */}
-              <div className="flex flex-col gap-4 min-h-0">
+              <div className="flex flex-col gap-4">
                 <div className="shrink-0 grid grid-cols-2 gap-3">
                   <div className="bg-gradient-to-br from-rose-400 to-rose-500 p-4 rounded-3xl text-white shadow-md shadow-rose-200 dark:shadow-none">
                     <p className="text-[11px] opacity-90 mb-1 uppercase tracking-wide">{t('dashboard.expenses', 'Dépenses')}</p>
@@ -373,7 +361,7 @@ function Dashboard() {
                   </div>
                 </div>
 
-                <div className="flex-1 flex flex-col min-h-0 bg-white dark:bg-slate-800 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors">
+                <div className="flex flex-col bg-white dark:bg-slate-800 p-5 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors h-96 lg:h-[450px]">
                   <div className="shrink-0 flex justify-between items-center mb-4">
                     <h3 className="font-bold text-slate-700 dark:text-slate-200">{t('dashboard.transactions', 'Transactions')}</h3>
                     <span onClick={() => navigate('/Transactions')} className="text-xs font-bold text-blue-500 dark:text-blue-400 cursor-pointer hover:underline">{t('dashboard.seeAll', 'Voir tout')}</span>
