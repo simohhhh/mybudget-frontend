@@ -293,13 +293,13 @@ function Transactions() {
           </header>
 
           {/* 💡 CORRECTION SCROLL : overflow-y-auto et pb-24 ajoutés */}
-          <div className="flex-1 px-4 md:px-8 pb-24 max-w-[1600px] w-full mx-auto overflow-y-auto flex flex-col">
+          <div className="flex-1 px-4 md:px-8 pb-24 lg:pb-8 max-w-[1600px] w-full mx-auto overflow-y-auto lg:overflow-hidden flex flex-col lg:min-h-0">
             
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:min-h-0 lg:flex-1">
               
               {/* === FORMULAIRE D'AJOUT (Gauche) === */}
-              <div className="lg:col-span-5 flex flex-col">
-                <div className="bg-white dark:bg-slate-800 p-6 xl:p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col relative z-20">
+              <div className="lg:col-span-5 flex flex-col lg:min-h-0">
+                <div className="bg-white dark:bg-slate-800 p-6 xl:p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col flex-1 lg:min-h-0 relative z-20 lg:overflow-y-auto custom-scrollbar">
                   
                   <div className="flex justify-between items-center mb-4 shrink-0">
                     <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">{t('transactions.newTitle', 'Nouvelle transaction')}</h2>
@@ -430,8 +430,8 @@ function Transactions() {
               </div>
 
               {/* === HISTORIQUE DES TRANSACTIONS (Droite) === */}
-              <div className="lg:col-span-7 flex flex-col">
-                <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col relative z-10 min-h-[500px]">
+              <div className="lg:col-span-7 flex flex-col lg:min-h-0">
+                <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col flex-1 lg:min-h-0 relative z-10 min-h-[500px] lg:min-h-0">
                   
                   <div className="flex justify-between items-center mb-8 gap-4 shrink-0">
                     <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">{t('transactions.history', 'Historique Complet')}</h2>
