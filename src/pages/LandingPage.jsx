@@ -43,7 +43,7 @@ export default function LandingPage() {
             {/* Le bloc avec les deux phrases */}
             <div className="flex flex-col justify-center">
               <span className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white leading-none">
-                MyBudget
+                Adawn
               </span>
               <span className="text-[0.65rem] md:text-xs font-bold text-slate-500 dark:text-slate-400 tracking-[0.2em] mt-0.5 uppercase">
                 Gestion Budget
@@ -133,7 +133,7 @@ export default function LandingPage() {
         <section className="max-w-7xl mx-auto px-6 md:px-12 w-full mt-32 mb-12">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white">
-              {t('landing.featuresTitle', 'CE QUE MyBudget VOUS OFFRE')}
+              {t('landing.featuresTitle', 'CE QUE Adawn VOUS OFFRE')}
             </h2>
           </div>
 
@@ -189,7 +189,7 @@ export default function LandingPage() {
       <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-8 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm font-medium text-slate-500 dark:text-slate-400">
           <p>
-            {t('landing.footer', '© {{year}} MyBudget. Tous droits réservés.', { year: currentYear })}
+            {t('landing.footer', '© {{year}} Adawn. Tous droits réservés.', { year: currentYear })}
           </p>
         </div>
       </footer>

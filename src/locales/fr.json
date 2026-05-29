@@ -1,6 +1,6 @@
 {
   "header": { "add": "Ajouter", "darkMode": "Mode Sombre", "logout": "Se déconnecter" },
-  "sidebar": { "title": "Mon Budget", "dashboard": "Dashboard", "transactions": "Transactions", "categories": "Catégories", "logout": "Déconnexion" },
+  "sidebar": { "title": "Adawn", "dashboard": "Dashboard", "transactions": "Transactions", "categories": "Catégories", "logout": "Déconnexion" },
   "dashboard": { "title": "Vue d'ensemble", "income": "Revenus", "expenses": "Dépenses", "incomeDetails": "Détails Revenus", "expensesDetails": "Détails Dépenses", "balance": "Solde Global", "transactions": "Transactions", "seeAll": "Voir tout", "empty": "Aucune transaction.", "emptyMonth": "Mois vide", "emptyMonthDesc": "Il n'y a aucune transaction pour ce mois. Le rapport PDF ne peut pas être généré." },
   "filters": { "today": "Aujourd'hui", "week": "Semaine", "month": "Ce mois", "year": "Cette année", "all": "Tout", "custom": "Personnalisée" },
   "transactions": {

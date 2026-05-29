@@ -1,6 +1,6 @@
 {
   "header": { "add": "Add New", "darkMode": "Dark Mode", "logout": "Logout" },
-  "sidebar": { "title": "Mon Budget", "dashboard": "Dashboard", "transactions": "Transactions", "categories": "Categories", "logout": "Logout" },
+  "sidebar": { "title": "Adawn", "dashboard": "Dashboard", "transactions": "Transactions", "categories": "Categories", "logout": "Logout" },
   "dashboard": { "title": "Overview", "income": "Income", "expenses": "Expenses", "incomeDetails": "Income Details", "expensesDetails": "Expenses Details", "balance": "Total Balance", "transactions": "Recent Transactions", "seeAll": "See all", "empty": "No transactions found.", "emptyMonth": "Empty Month", "emptyMonthDesc": "There are no transactions for this month. The PDF report cannot be generated." },
   "filters": { "today": "Today", "week": "This Week", "month": "This Month", "year": "This Year", "all": "All Time", "custom": "Custom" },
   "transactions": {

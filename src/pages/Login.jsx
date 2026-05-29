@@ -49,7 +49,7 @@ function Login() {
         
         <div className="flex justify-center items-center gap-3 mb-8 text-blue-600 dark:text-blue-500">
           <Wallet size={36} />
-          <span className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">MyBudget</span>
+          <span className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Adawn</span>
         </div>
 
         <div className="text-center mb-8">

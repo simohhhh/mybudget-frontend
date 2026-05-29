@@ -109,7 +109,7 @@ export default function WelcomeOnboarding({ onComplete }) {
             <div className="bg-white/20 p-3 rounded-2xl backdrop-blur-sm mb-4">
               <Sparkles size={32} className="text-white" />
             </div>
-            <h2 className="text-3xl font-extrabold text-white mb-2">Bienvenue sur MyBudget !</h2>
+            <h2 className="text-3xl font-extrabold text-white mb-2">Bienvenue sur Adawn !</h2>
             <p className="text-blue-100 text-lg">Configurons votre espace en sélectionnant vos catégories principales.</p>
           </div>
         </div>

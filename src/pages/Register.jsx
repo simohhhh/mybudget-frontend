@@ -93,7 +93,7 @@ function Register() {
         {/* LOGO CLIQUABLE VERS L'ACCUEIL */}
         <Link to="/" className="flex justify-center items-center gap-3 mb-8 text-blue-600 dark:text-blue-500 hover:opacity-80 transition-opacity">
           <Wallet size={36} />
-          <span className="text-3xl font-extrabold text-slate-900 dark:text-white">MyBudget</span>
+          <span className="text-3xl font-extrabold text-slate-900 dark:text-white">Adawn</span>
         </Link>
 
         <div className="text-center mb-8">
