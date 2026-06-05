@@ -71,7 +71,7 @@ function Categories() {
   const handleQuickAdd = async (preset) => {
     try {
       await api.post('/categories', preset);
-      setStatus({ type: 'success', message: `${preset.nom} ${t('categories.addSuccess', 'ajoutée !')}` });
+      setStatus({ type: 'success', message: `${t(`categories_list.${preset.nom}`, preset.nom)} ${t('categories.addSuccess', 'ajoutée !')}` });
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
@@ -172,7 +172,10 @@ function Categories() {
                         <div className="w-16 h-16 rounded-full flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-110 active:scale-95" style={{ backgroundColor: preset.couleur }}>
                           <RenderIcon name={preset.icone} size={28} />
                         </div>
-                        <span className="text-xs font-medium text-slate-600 dark:text-slate-400 text-center">{preset.nom}</span>
+                        {/* 💡 MODIFICATION : Traduction des catégories Quick Add */}
+                        <span className="text-xs font-medium text-slate-600 dark:text-slate-400 text-center">
+                          {t(`categories_list.${preset.nom}`, preset.nom)}
+                        </span>
                       </div>
                     ))}
                     <div onClick={() => setUiMode('custom')} className="flex flex-col items-center gap-2 cursor-pointer group">

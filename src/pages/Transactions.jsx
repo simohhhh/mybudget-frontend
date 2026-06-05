@@ -389,7 +389,9 @@ function Transactions() {
                                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-white shrink-0" style={{ backgroundColor: cat.couleur || '#cbd5e1' }}>
                                     <RenderIcon name={cat.icone} size={16} />
                                   </div>
-                                  <span className="font-bold text-sm">{cat.nom}</span>
+                                  <span className="font-bold text-sm">
+                                    {t(`categories_list.${cat.nom}`, cat.nom)}
+                                  </span>
                                 </div>
                               ))}
                             </div>
