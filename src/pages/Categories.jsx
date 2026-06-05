@@ -45,7 +45,6 @@ const MySwal = withReactContent(Swal);
 
 function Categories() {
   const navigate = useNavigate();
-  // 💡 AJOUT DE i18n ICI POUR DETECTER LA LANGUE ACTIVE
   const { t, i18n } = useTranslation();
 
   const [categories, setCategories] = useState([]);
@@ -73,7 +72,6 @@ function Categories() {
     try {
       await api.post('/categories', preset);
       
-      // 💡 CORRECTIF BILINGUE INFAILLIBLE
       const motSucces = i18n.language === 'en' ? 'successfully added!' : 'ajoutée !';
       const nomTraduit = t(`categories_list.${preset.nom}`, preset.nom);
       
@@ -82,7 +80,11 @@ function Categories() {
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
-      setStatus({ type: 'error', message: err.response?.data?.message || t('categories.addError', "Erreur d'ajout") });
+      let errorMsg = err.response?.data?.message || t('categories.addError', "Erreur d'ajout");
+      if (errorMsg.includes('existante')) {
+        errorMsg = i18n.language === 'en' ? 'This category already exists.' : 'Catégorie déjà existante.';
+      }
+      setStatus({ type: 'error', message: errorMsg });
     }
   };
 
@@ -96,7 +98,11 @@ function Categories() {
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
-      setStatus({ type: 'error', message: err.response?.data?.message || t('categories.addError', "Erreur de création") });
+      let errorMsg = err.response?.data?.message || t('categories.addError', "Erreur de création");
+      if (errorMsg.includes('existante')) {
+        errorMsg = i18n.language === 'en' ? 'This category already exists.' : 'Catégorie déjà existante.';
+      }
+      setStatus({ type: 'error', message: errorMsg });
     }
   };
 
@@ -154,7 +160,7 @@ function Categories() {
 
       <div className="flex-1 flex flex-col h-full overflow-hidden">
 
-        {/* 💡 HEADER EPURÉ (Sans boutons langue ni thème) */}
+        {/* HEADER EPURÉ */}
         <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 pl-16 pr-4 md:px-8 flex justify-between items-center transition-colors duration-300">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('categories.pageTitle', 'Paramètres des Catégories')}</h1>
         </header>
