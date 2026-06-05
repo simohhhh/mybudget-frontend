@@ -292,7 +292,6 @@ function Transactions() {
             <h1 className="text-2xl font-bold">{t('transactions.pageTitle', 'Saisie des transactions')}</h1>
           </header>
 
-          {/* 💡 CORRECTION SCROLL : overflow-y-auto et pb-24 ajoutés */}
           <div className="flex-1 px-4 md:px-8 pb-24 lg:pb-8 max-w-[1600px] w-full mx-auto overflow-y-auto lg:overflow-hidden flex flex-col lg:min-h-0">
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:min-h-0 lg:flex-1">
@@ -335,7 +334,6 @@ function Transactions() {
                   )}
 
                   <form onSubmit={handleSubmit} className="space-y-3 flex flex-col justify-between">
-                    {/* 💡 CORRECTION FLEX-COL : Adaptation sur mobile */}
                     <div className="flex flex-col sm:flex-row gap-4">
                       <div className="flex-1">
                         <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.amount', 'Montant (DH)')}</label>
@@ -373,7 +371,10 @@ function Transactions() {
                         {selectedCategory ? (
                           <div className="flex items-center gap-3">
                             <div className="w-6 h-6 rounded-full flex items-center justify-center text-white" style={{ backgroundColor: selectedCategory.couleur }}><RenderIcon name={selectedCategory.icone} size={14} /></div>
-                            <span className="font-bold text-sm">{selectedCategory.nom}</span>
+                            {/* 💡 MODIFICATION ICI POUR L'AJOUT */}
+                            <span className="font-bold text-sm">
+                              {t(`categories_list.${selectedCategory.nom}`, selectedCategory.nom)}
+                            </span>
                           </div>
                         ) : <span className="text-slate-400 text-sm">{t('transactions.chooseCategory', 'Choisir une catégorie...')}</span>}
                         <ChevronDown size={18} className={`text-slate-400 transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
@@ -406,7 +407,7 @@ function Transactions() {
                                 className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold rounded-lg cursor-pointer transition-colors"
                               >
                                 <PlusCircle size={18} />
-                                <span className="text-sm">Créer une catégorie</span>
+                                <span className="text-sm">{t('categories.createBtn', 'Créer une catégorie')}</span>
                               </div>
                             </div>
                           </div>
@@ -543,9 +544,12 @@ function Transactions() {
                     {editSelectedCategory ? (
                       <div className="flex items-center gap-3">
                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-white" style={{ backgroundColor: editSelectedCategory.couleur }}><RenderIcon name={editSelectedCategory.icone} size={14} /></div>
-                        <span className="font-bold text-sm">{editSelectedCategory.nom}</span>
+                        {/* 💡 MODIFICATION ICI POUR LA MODIFICATION */}
+                        <span className="font-bold text-sm">
+                          {t(`categories_list.${editSelectedCategory.nom}`, editSelectedCategory.nom)}
+                        </span>
                       </div>
-                    ) : <span className="text-slate-400 text-sm">Choisir...</span>}
+                    ) : <span className="text-slate-400 text-sm">{t('transactions.chooseCategory', 'Choisir une catégorie...')}</span>}
                     <ChevronDown size={18} className={`text-slate-400 transition-transform ${isEditCategoryOpen ? 'rotate-180' : ''}`} />
                   </div>
 

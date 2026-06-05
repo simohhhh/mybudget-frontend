@@ -45,7 +45,8 @@ const MySwal = withReactContent(Swal);
 
 function Categories() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  // 💡 AJOUT DE i18n ICI POUR DETECTER LA LANGUE ACTIVE
+  const { t, i18n } = useTranslation();
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +72,13 @@ function Categories() {
   const handleQuickAdd = async (preset) => {
     try {
       await api.post('/categories', preset);
-      setStatus({ type: 'success', message: `${t(`categories_list.${preset.nom}`, preset.nom)} ${t('categories.addSuccess', 'ajoutée !')}` });
+      
+      // 💡 CORRECTIF BILINGUE INFAILLIBLE
+      const motSucces = i18n.language === 'en' ? 'successfully added!' : 'ajoutée !';
+      const nomTraduit = t(`categories_list.${preset.nom}`, preset.nom);
+      
+      setStatus({ type: 'success', message: `${nomTraduit} ${motSucces}` });
+      
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
@@ -172,7 +179,6 @@ function Categories() {
                         <div className="w-16 h-16 rounded-full flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-110 active:scale-95" style={{ backgroundColor: preset.couleur }}>
                           <RenderIcon name={preset.icone} size={28} />
                         </div>
-                        {/* 💡 MODIFICATION : Traduction des catégories Quick Add */}
                         <span className="text-xs font-medium text-slate-600 dark:text-slate-400 text-center">
                           {t(`categories_list.${preset.nom}`, preset.nom)}
                         </span>
