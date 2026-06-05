@@ -111,5 +111,21 @@
     "logoutTitle": "Se déconnecter ?",
     "logoutText": "Voulez-vous vraiment fermer votre session ?",
     "logoutConfirm": "Oui, déconnexion"
+  },
+  "categories_list": {
+    "Alimentation": "Alimentation",
+    "Transport": "Transport",
+    "Logement": "Logement",
+    "Loisirs": "Loisirs",
+    "Courses": "Courses",
+    "Santé": "Santé",
+    "Éducation": "Éducation",
+    "Travail": "Travail",
+    "Voyage": "Voyage",
+    "Vêtements": "Vêtements",
+    "Sport": "Sport",
+    "Maison": "Maison",
+    "Famille": "Famille",
+    "Salaire": "Salaire"
   }
 }

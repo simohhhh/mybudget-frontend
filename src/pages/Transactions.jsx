@@ -4,7 +4,7 @@ import api from '../services/api';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { useTranslation } from 'react-i18next';
-import { 
+import {
   LayoutDashboard, Tag, LogOut, Wallet, PlusCircle, Trash2, Pencil, X, AlertCircle, CheckCircle2, ArrowRightLeft, ChevronDown, Search, Mic,
   Heart, Gamepad2, Home, Utensils, GraduationCap, Bus, ShoppingCart, Users, Dumbbell, Shirt, Apple, Briefcase, Coffee, Plane, FileText, Car, Train, Ship, Bike, Fuel, Pizza, Croissant, Beer, Wine, Tv, Film, Music, Ticket, Smartphone, Laptop, Monitor, Mouse, Sofa, Bed, Bath, Lightbulb, Stethoscope, Syringe, Pill, Baby, Cat, Dog, CreditCard, Coins, Landmark, PiggyBank, Receipt, Gift, Scissors, Wrench, Umbrella, Globe
 } from 'lucide-react';
@@ -87,8 +87,8 @@ function Transactions() {
   const parler = (texte) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(texte);
-      utterance.lang = i18n.language === 'en' ? 'en-US' : 'fr-FR'; 
-      utterance.rate = 1.1; 
+      utterance.lang = i18n.language === 'en' ? 'en-US' : 'fr-FR';
+      utterance.rate = 1.1;
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -99,7 +99,7 @@ function Transactions() {
 
     try {
       const categoriesReduites = categories.map(c => ({ _id: c._id, nom: c.nom }));
-      
+
       const response = await api.post('/transactions/analyze-voice', {
         texte: texteReconnu,
         categoriesDisponibles: categoriesReduites
@@ -116,13 +116,13 @@ function Transactions() {
       MySwal.fire({ icon: 'error', title: 'Erreur IA', text: 'Impossible de traiter la demande vocale.' });
     } finally {
       setIsProcessingVoice(false);
-      setTimeout(() => setTranscript(''), 4000); 
+      setTimeout(() => setTranscript(''), 4000);
     }
   };
 
   const handleVoiceInput = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
+
     if (!SpeechRecognition) {
       MySwal.fire({ icon: 'error', title: 'Erreur', text: "Votre navigateur ne supporte pas la reconnaissance vocale." });
       return;
@@ -130,12 +130,12 @@ function Transactions() {
 
     const recognition = new SpeechRecognition();
     recognition.lang = i18n.language === 'en' ? 'en-US' : 'fr-FR';
-    recognition.interimResults = true; 
+    recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
       setIsListening(true);
-      setTranscript(''); 
+      setTranscript('');
     };
 
     recognition.onresult = (event) => {
@@ -167,9 +167,9 @@ function Transactions() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ type: '', message: '' });
-    
+
     if (!formData.categorieId) return setStatus({ type: 'error', message: t('transactions.chooseCategoryError', 'Choisissez une catégorie.') });
-    
+
     if (formData.date > todayString) {
       return setStatus({ type: 'error', message: t('transactions.futureDateError', 'La date ne peut pas être dans le futur.') });
     }
@@ -218,7 +218,7 @@ function Transactions() {
 
   const handleDelete = (id) => {
     const isDark = document.documentElement.classList.contains('dark');
-    
+
     MySwal.fire({
       title: t('transactions.deleteTitle', 'Supprimer cette opération ?'),
       text: t('transactions.deleteWarning', "Cette action est irréversible !"),
@@ -233,9 +233,9 @@ function Transactions() {
       borderRadius: '1.5rem'
     }).then(async (result) => {
       if (result.isConfirmed) {
-        try { 
-          await api.delete(`/transactions/${id}`); 
-          fetchData(); 
+        try {
+          await api.delete(`/transactions/${id}`);
+          fetchData();
           MySwal.fire({
             title: t('transactions.deletedTitle', 'Supprimée !'),
             text: t('transactions.deletedMsg', 'Votre opération a bien été effacée.'),
@@ -244,7 +244,7 @@ function Transactions() {
             background: isDark ? '#1e293b' : '#ffffff',
             color: isDark ? '#f8fafc' : '#0f172a'
           });
-        } catch (err) { 
+        } catch (err) {
           MySwal.fire({
             title: t('transactions.errorTitle', 'Erreur'),
             text: t('transactions.errorMsg', 'Impossible de supprimer cette opération.'),
@@ -267,7 +267,7 @@ function Transactions() {
 
   const selectedCategory = categories.find(c => c._id === formData.categorieId);
   const editSelectedCategory = editingTx ? categories.find(c => c._id === editingTx.categorieId) : null;
-  
+
   const filteredTransactions = transactions.filter(tx => {
     const search = searchTerm.toLowerCase();
     const titreMatch = tx.titre ? tx.titre.toLowerCase().includes(search) : false;
@@ -286,7 +286,7 @@ function Transactions() {
     <>
       <div className="h-screen overflow-hidden bg-[#f4f7fb] dark:bg-slate-900 flex font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300">
         <Sidebar />
-        
+
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
           <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900">
             <h1 className="text-2xl font-bold">{t('transactions.pageTitle', 'Saisie des transactions')}</h1>
@@ -294,22 +294,22 @@ function Transactions() {
 
           {/* 💡 CORRECTION SCROLL : overflow-y-auto et pb-24 ajoutés */}
           <div className="flex-1 px-4 md:px-8 pb-24 lg:pb-8 max-w-[1600px] w-full mx-auto overflow-y-auto lg:overflow-hidden flex flex-col lg:min-h-0">
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:min-h-0 lg:flex-1">
-              
+
               {/* === FORMULAIRE D'AJOUT (Gauche) === */}
               <div className="lg:col-span-5 flex flex-col lg:min-h-0">
                 <div className="bg-white dark:bg-slate-800 p-6 xl:p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col flex-1 lg:min-h-0 relative z-20 lg:overflow-y-auto custom-scrollbar">
-                  
+
                   <div className="flex justify-between items-center mb-4 shrink-0">
                     <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">{t('transactions.newTitle', 'Nouvelle transaction')}</h2>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={handleVoiceInput}
                       disabled={isProcessingVoice}
                       className={`p-3 rounded-full transition-all shadow-md flex items-center justify-center
-                        ${isListening 
-                          ? 'bg-rose-500 text-white animate-pulse' 
+                        ${isListening
+                          ? 'bg-rose-500 text-white animate-pulse'
                           : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 hover:bg-blue-200'} 
                         ${isProcessingVoice ? 'opacity-50 cursor-not-allowed' : ''}`}
                       title={t('transactions.voiceBtnTitle', 'Ajouter par la voix')}
@@ -317,7 +317,7 @@ function Transactions() {
                       <Mic size={20} className={isListening ? 'animate-bounce' : ''} />
                     </button>
                   </div>
-                  
+
                   {transcript && (
                     <div className="mb-4 p-4 bg-blue-50 dark:bg-slate-700/50 rounded-xl border border-blue-100 dark:border-slate-600 flex items-center gap-3 animate-fade-in shrink-0">
                       <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
@@ -339,20 +339,20 @@ function Transactions() {
                     <div className="flex flex-col sm:flex-row gap-4">
                       <div className="flex-1">
                         <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.amount', 'Montant (DH)')}</label>
-                        <input type="number" placeholder="0.00" required step="0.01" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition text-xl font-bold text-slate-800 dark:text-white" value={formData.montant} onChange={(e) => setFormData({...formData, montant: e.target.value})} />
+                        <input type="number" placeholder="0.00" required step="0.01" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition text-xl font-bold text-slate-800 dark:text-white" value={formData.montant} onChange={(e) => setFormData({ ...formData, montant: e.target.value })} />
                       </div>
                       <div className="w-full sm:w-1/3 flex flex-col">
                         <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.type', 'Type')}</label>
                         <div className="flex bg-slate-50 dark:bg-slate-700/50 p-1 rounded-xl border border-slate-200 dark:border-slate-600 flex-1 min-h-[48px]">
-                          <button type="button" onClick={() => setFormData({...formData, type: 'depense'})} className={`flex-1 rounded-lg text-sm font-bold transition-all ${formData.type === 'depense' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.expense', 'Dépense')}</button>
-                          <button type="button" onClick={() => setFormData({...formData, type: 'revenu'})} className={`flex-1 rounded-lg text-sm font-bold transition-all ${formData.type === 'revenu' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.income', 'Revenu')}</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'depense' })} className={`flex-1 rounded-lg text-sm font-bold transition-all ${formData.type === 'depense' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.expense', 'Dépense')}</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'revenu' })} className={`flex-1 rounded-lg text-sm font-bold transition-all ${formData.type === 'revenu' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.income', 'Revenu')}</button>
                         </div>
                       </div>
                     </div>
 
                     <div>
                       <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.titleLabel', 'Titre')}</label>
-                      <input type="text" placeholder={t('transactions.titlePlaceholder', 'Ex: Déjeuner...')} required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-white" value={formData.titre} onChange={(e) => setFormData({...formData, titre: e.target.value})} />
+                      <input type="text" placeholder={t('transactions.titlePlaceholder', 'Ex: Déjeuner...')} required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-white" value={formData.titre} onChange={(e) => setFormData({ ...formData, titre: e.target.value })} />
                     </div>
 
                     <div>
@@ -363,7 +363,7 @@ function Transactions() {
                           <button type="button" onClick={() => setQuickDate(1)} className={`flex-1 py-1.5 rounded-lg text-sm font-bold transition ${formData.date === new Date(Date.now() - 86400000).toISOString().split('T')[0] ? 'bg-blue-500 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600'}`}>{t('transactions.yesterdayBtn', 'Hier')}</button>
                           <button type="button" onClick={() => setQuickDate(2)} className={`flex-1 py-1.5 rounded-lg text-sm font-bold transition ${formData.date === new Date(Date.now() - 172800000).toISOString().split('T')[0] ? 'bg-blue-500 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600'}`}>{t('transactions.twoDaysBtn', '-2 Jours')}</button>
                         </div>
-                        <input type="date" required max={todayString} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none text-sm cursor-pointer" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} />
+                        <input type="date" required max={todayString} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none text-sm cursor-pointer" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} />
                       </div>
                     </div>
 
@@ -381,7 +381,7 @@ function Transactions() {
                       {isCategoryOpen && (
                         <>
                           <div className="fixed inset-0 z-10" onClick={() => setIsCategoryOpen(false)}></div>
-                          
+
                           <div className="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-xl rounded-xl overflow-hidden flex flex-col">
                             <div className="max-h-48 overflow-y-auto custom-scrollbar py-2">
                               {categories.map(cat => (
@@ -393,9 +393,9 @@ function Transactions() {
                                 </div>
                               ))}
                             </div>
-                            
+
                             <div className="p-2 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
-                              <div 
+                              <div
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleNaviguerVersCategories();
@@ -414,11 +414,11 @@ function Transactions() {
 
                     <div>
                       <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.descLabel', 'Description')}</label>
-                      <textarea 
-                        placeholder={t('transactions.descPlaceholder', 'Ajoutez des détails')} 
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition resize-none h-24 text-slate-800 dark:text-white text-sm custom-scrollbar break-all" 
-                        value={formData.description} 
-                        onChange={(e) => setFormData({...formData, description: e.target.value})} 
+                      <textarea
+                        placeholder={t('transactions.descPlaceholder', 'Ajoutez des détails')}
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition resize-none h-24 text-slate-800 dark:text-white text-sm custom-scrollbar break-all"
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       />
                     </div>
 
@@ -432,7 +432,7 @@ function Transactions() {
               {/* === HISTORIQUE DES TRANSACTIONS (Droite) === */}
               <div className="lg:col-span-7 flex flex-col lg:min-h-0">
                 <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col flex-1 lg:min-h-0 relative z-10 min-h-[500px] lg:min-h-0">
-                  
+
                   <div className="flex justify-between items-center mb-8 gap-4 shrink-0">
                     <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200">{t('transactions.history', 'Historique Complet')}</h2>
                     <div className="relative w-64">
@@ -444,7 +444,7 @@ function Transactions() {
                   <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar space-y-2.5">
                     {filteredTransactions.map((tx) => (
                       <div key={tx._id} className="flex flex-col px-4 py-3.5 border border-slate-100 dark:border-slate-700/50 hover:border-blue-200 rounded-xl transition group bg-white dark:bg-slate-800">
-                        
+
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-sm shrink-0" style={{ backgroundColor: tx.categorie?.couleur || '#cbd5e1' }}>
@@ -452,13 +452,15 @@ function Transactions() {
                             </div>
                             <div>
                               <h4 className="font-bold text-base leading-tight">{tx.titre}</h4>
-                              <p className="text-[11px] text-slate-500 mt-0.5">{tx.categorie?.nom || t('transactions.general', 'Général')} • {formaterDate(tx.date)}</p>
+                              <p className="text-xs text-slate-400">
+                                {tx.categorie ? t(`categories_list.${tx.categorie.nom}`, tx.categorie.nom) : t('transactions.general')}
+                              </p>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-2 shrink-0">
                             <span className={`text-base font-bold mr-1 ${tx.type === 'revenu' ? 'text-emerald-500' : 'text-rose-600'}`}>{tx.type === 'revenu' ? '+' : '-'}{formatDevise(tx.montant)}</span>
-                            
+
                             <button onClick={() => handleEditClick(tx)} className="text-slate-300 hover:text-blue-500 transition opacity-0 group-hover:opacity-100 p-1.5" title="Modifier">
                               <Pencil size={16} />
                             </button>
@@ -493,7 +495,7 @@ function Transactions() {
       {editingTx && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fade-in">
           <div className="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
+
             <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
               <h2 className="text-xl font-bold text-slate-800 dark:text-white">Modifier la transaction</h2>
               <button onClick={() => setEditingTx(null)} className="p-2 text-slate-400 hover:text-rose-500 bg-slate-50 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-500/20 rounded-full transition-colors">
@@ -506,20 +508,20 @@ function Transactions() {
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.amount', 'Montant (DH)')}</label>
-                    <input type="number" required step="0.01" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition text-xl font-bold text-slate-800 dark:text-white" value={editingTx.montant} onChange={(e) => setEditingTx({...editingTx, montant: e.target.value})} />
+                    <input type="number" required step="0.01" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition text-xl font-bold text-slate-800 dark:text-white" value={editingTx.montant} onChange={(e) => setEditingTx({ ...editingTx, montant: e.target.value })} />
                   </div>
                   <div className="w-1/3 flex flex-col">
                     <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.type', 'Type')}</label>
                     <div className="flex bg-slate-50 dark:bg-slate-700/50 p-1 rounded-xl border border-slate-200 dark:border-slate-600 flex-1 min-h-[48px]">
-                      <button type="button" onClick={() => setEditingTx({...editingTx, type: 'depense'})} className={`flex-1 rounded-lg text-sm font-bold transition-all ${editingTx.type === 'depense' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.expense', 'Dépense')}</button>
-                      <button type="button" onClick={() => setEditingTx({...editingTx, type: 'revenu'})} className={`flex-1 rounded-lg text-sm font-bold transition-all ${editingTx.type === 'revenu' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.income', 'Revenu')}</button>
+                      <button type="button" onClick={() => setEditingTx({ ...editingTx, type: 'depense' })} className={`flex-1 rounded-lg text-sm font-bold transition-all ${editingTx.type === 'depense' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.expense', 'Dépense')}</button>
+                      <button type="button" onClick={() => setEditingTx({ ...editingTx, type: 'revenu' })} className={`flex-1 rounded-lg text-sm font-bold transition-all ${editingTx.type === 'revenu' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500'}`}>{t('transactions.income', 'Revenu')}</button>
                     </div>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.titleLabel', 'Titre')}</label>
-                  <input type="text" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-white" value={editingTx.titre} onChange={(e) => setEditingTx({...editingTx, titre: e.target.value})} />
+                  <input type="text" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-white" value={editingTx.titre} onChange={(e) => setEditingTx({ ...editingTx, titre: e.target.value })} />
                 </div>
 
                 <div>
@@ -529,7 +531,7 @@ function Transactions() {
                       <button type="button" onClick={() => setEditQuickDate(0)} className={`flex-1 py-1.5 rounded-lg text-sm font-bold transition ${editingTx.date === todayString ? 'bg-blue-500 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600'}`}>{t('transactions.todayBtn', 'Auj.')}</button>
                       <button type="button" onClick={() => setEditQuickDate(1)} className={`flex-1 py-1.5 rounded-lg text-sm font-bold transition ${editingTx.date === new Date(Date.now() - 86400000).toISOString().split('T')[0] ? 'bg-blue-500 text-white shadow-sm' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-600'}`}>{t('transactions.yesterdayBtn', 'Hier')}</button>
                     </div>
-                    <input type="date" required max={todayString} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none text-sm cursor-pointer" value={editingTx.date} onChange={(e) => setEditingTx({...editingTx, date: e.target.value})} />
+                    <input type="date" required max={todayString} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none text-sm cursor-pointer" value={editingTx.date} onChange={(e) => setEditingTx({ ...editingTx, date: e.target.value })} />
                   </div>
                 </div>
 
@@ -544,7 +546,7 @@ function Transactions() {
                     ) : <span className="text-slate-400 text-sm">Choisir...</span>}
                     <ChevronDown size={18} className={`text-slate-400 transition-transform ${isEditCategoryOpen ? 'rotate-180' : ''}`} />
                   </div>
-                  
+
                   {isEditCategoryOpen && (
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setIsEditCategoryOpen(false)}></div>
@@ -553,7 +555,7 @@ function Transactions() {
                           {categories.map(cat => (
                             <div key={cat._id} onClick={() => { setEditingTx({ ...editingTx, categorieId: cat._id }); setIsEditCategoryOpen(false); }} className="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
                               <div className="w-8 h-8 rounded-full flex items-center justify-center text-white shrink-0" style={{ backgroundColor: cat.couleur || '#cbd5e1' }}><RenderIcon name={cat.icone} size={16} /></div>
-                              <span className="font-bold text-sm">{cat.nom}</span>
+                              <span className="font-bold text-sm">{t(`categories_list.${cat.nom}`, cat.nom)}</span>
                             </div>
                           ))}
                         </div>
@@ -564,10 +566,10 @@ function Transactions() {
 
                 <div>
                   <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">{t('transactions.descLabel', 'Description')}</label>
-                  <textarea 
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition resize-none h-24 text-slate-800 dark:text-white text-sm custom-scrollbar break-all" 
-                    value={editingTx.description} 
-                    onChange={(e) => setEditingTx({...editingTx, description: e.target.value})} 
+                  <textarea
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition resize-none h-24 text-slate-800 dark:text-white text-sm custom-scrollbar break-all"
+                    value={editingTx.description}
+                    onChange={(e) => setEditingTx({ ...editingTx, description: e.target.value })}
                   />
                 </div>
               </form>
@@ -578,7 +580,7 @@ function Transactions() {
                 Enregistrer les modifications
               </button>
             </div>
-            
+
           </div>
         </div>
       )}

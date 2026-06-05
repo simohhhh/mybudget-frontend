@@ -11,7 +11,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const MySwal = withReactContent(Swal);
@@ -148,7 +148,8 @@ function Dashboard() {
     const tableRows = transactionsDuMois.map(tx => [
       new Date(tx.date).toLocaleDateString(i18n.language || 'fr-FR'),
       tx.titre,
-      tx.categorie?.nom || 'Général',
+      // 💡 MODIFICATION : Traduction de la catégorie dans le PDF
+      tx.categorie ? t(`categories_list.${tx.categorie.nom}`, tx.categorie.nom) : t('transactions.general', 'Général'),
       tx.type === 'revenu' ? 'Revenu' : 'Dépense',
       `${tx.type === 'revenu' ? '+' : '-'}${tx.montant} MAD`
     ]);
@@ -193,7 +194,8 @@ function Dashboard() {
   const optionsDoughnut = { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } };
 
   const doughnutDepenses = {
-    labels: depensesData.length > 0 ? depensesData.map(c => c.nom) : [t('dashboard.empty', 'Aucune dépense')],
+    // 💡 MODIFICATION : Traduction des labels du graphique Dépenses
+    labels: depensesData.length > 0 ? depensesData.map(c => t(`categories_list.${c.nom}`, c.nom)) : [t('dashboard.empty', 'Aucune dépense')],
     datasets: [{
       data: depensesData.length > 0 ? depensesData.map(c => c.total) : [1],
       backgroundColor: depensesData.length > 0 ? depensesData.map(c => c.couleur) : [isDarkMode ? '#334155' : '#f1f5f9'],
@@ -202,7 +204,8 @@ function Dashboard() {
   };
 
   const doughnutRevenus = {
-    labels: revenusData.length > 0 ? revenusData.map(c => c.nom) : [t('dashboard.empty', 'Aucun revenu')],
+    // 💡 MODIFICATION : Traduction des labels du graphique Revenus
+    labels: revenusData.length > 0 ? revenusData.map(c => t(`categories_list.${c.nom}`, c.nom)) : [t('dashboard.empty', 'Aucun revenu')],
     datasets: [{
       data: revenusData.length > 0 ? revenusData.map(c => c.total) : [1],
       backgroundColor: revenusData.length > 0 ? revenusData.map(c => c.couleur) : [isDarkMode ? '#334155' : '#f1f5f9'],
@@ -245,7 +248,6 @@ function Dashboard() {
             </div>
           </header>
 
-          {/* 💡 CORRECTION SCROLL : overflow-y-auto et pb-24 */}
           <div className="flex-1 px-4 md:px-8 pb-24 max-w-[1600px] w-full mx-auto overflow-y-auto flex flex-col">
             <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 transition-colors duration-300">
               <div className="flex gap-1 overflow-x-auto w-full md:w-auto p-1">
@@ -254,7 +256,6 @@ function Dashboard() {
                   const fallbackTxt = filter === 'day' ? "Aujourd'hui" : filter === 'week' ? 'Semaine' : filter === 'month' ? 'Ce mois' : filter === 'year' ? 'Cette année' : 'Tout';
                   
                   return (
-                    /* 💡 CORRECTION WHITESPACE-NOWRAP : Empêche le texte de se couper sur mobile */
                     <button key={filter} onClick={() => { setTimeFilter(filter); setShowCustomPicker(false); }} className={`px-4 py-2 rounded-xl text-sm font-bold capitalize whitespace-nowrap transition-all ${timeFilter === filter ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50'}`}>
                       {t(`filters.${jsonKey}`, fallbackTxt)} 
                     </button>
@@ -275,7 +276,6 @@ function Dashboard() {
               )}
             </div>
 
-            {/* 💡 CORRECTION GRID : flex-1 et min-h-0 retirés */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
               {/* stats revenus */}
@@ -301,7 +301,8 @@ function Dashboard() {
                       const pct = totalRevenus > 0 ? Math.round((cat.total / totalRevenus) * 100) : 0;
                       return (
                         <div key={idx}>
-                          <div className="flex justify-between text-sm mb-1"><span className="font-bold text-slate-700 dark:text-slate-300">{cat.nom}</span><span className="text-slate-500 dark:text-slate-400">{pct}%</span></div>
+                          {/* 💡 MODIFICATION : Traduction dans la liste des détails Revenus */}
+                          <div className="flex justify-between text-sm mb-1"><span className="font-bold text-slate-700 dark:text-slate-300">{t(`categories_list.${cat.nom}`, cat.nom)}</span><span className="text-slate-500 dark:text-slate-400">{pct}%</span></div>
                           <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5"><div className="h-1.5 rounded-full" style={{ width: `${pct}%`, backgroundColor: cat.couleur }}></div></div>
                         </div>
                       );
@@ -334,7 +335,8 @@ function Dashboard() {
                       const pct = totalDepenses > 0 ? Math.round((cat.total / totalDepenses) * 100) : 0;
                       return (
                         <div key={idx}>
-                          <div className="flex justify-between text-sm mb-1"><span className="font-bold text-slate-700 dark:text-slate-300">{cat.nom}</span><span className="text-slate-500 dark:text-slate-400">{pct}%</span></div>
+                          {/* 💡 MODIFICATION : Traduction dans la liste des détails Dépenses */}
+                          <div className="flex justify-between text-sm mb-1"><span className="font-bold text-slate-700 dark:text-slate-300">{t(`categories_list.${cat.nom}`, cat.nom)}</span><span className="text-slate-500 dark:text-slate-400">{pct}%</span></div>
                           <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5"><div className="h-1.5 rounded-full" style={{ width: `${pct}%`, backgroundColor: cat.couleur }}></div></div>
                         </div>
                       );
@@ -371,7 +373,10 @@ function Dashboard() {
                       <div key={tx._id} className="flex justify-between items-center border-b border-slate-50 dark:border-slate-700/50 pb-2.5 last:border-0 last:pb-0">
                         <div>
                           <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{tx.titre}</h4>
-                          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{tx.categorie?.nom || 'Général'} • {formaterDateCourte(tx.date)}</p>
+                          {/* 💡 MODIFICATION : Traduction de la catégorie dans la liste des transactions récentes */}
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                            {tx.categorie ? t(`categories_list.${tx.categorie.nom}`, tx.categorie.nom) : t('transactions.general', 'Général')} • {formaterDateCourte(tx.date)}
+                          </p>
                         </div>
                         <span className={`text-sm font-bold ${tx.type === 'revenu' ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}`}>
                           {tx.type === 'revenu' ? '+' : '-'}{formatDevise(tx.montant)}

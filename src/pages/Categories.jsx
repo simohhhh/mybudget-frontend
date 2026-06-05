@@ -4,26 +4,26 @@ import api from '../services/api';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { useTranslation } from 'react-i18next';
-import { 
-  LayoutDashboard, Tag, LogOut, Wallet, PlusCircle, Trash2, 
+import {
+  LayoutDashboard, Tag, LogOut, Wallet, PlusCircle, Trash2,
   AlertCircle, CheckCircle2, Palette, FileText, ArrowLeft, Plus, ArrowRightLeft,
-  Heart, Gamepad2, Home, Utensils, GraduationCap, Bus, 
+  Heart, Gamepad2, Home, Utensils, GraduationCap, Bus,
   ShoppingCart, Users, Dumbbell, Shirt, Apple, Briefcase, Coffee, Plane,
-  Car, Train, Ship, Bike, Fuel, Pizza, Croissant, Beer, Wine, 
-  Tv, Film, Music, Mic, Ticket, Smartphone, Laptop, Monitor, Mouse, 
-  Sofa, Bed, Bath, Lightbulb, Stethoscope, Syringe, Pill, 
-  Baby, Cat, Dog, CreditCard, Coins, Landmark, PiggyBank, Receipt, 
+  Car, Train, Ship, Bike, Fuel, Pizza, Croissant, Beer, Wine,
+  Tv, Film, Music, Mic, Ticket, Smartphone, Laptop, Monitor, Mouse,
+  Sofa, Bed, Bath, Lightbulb, Stethoscope, Syringe, Pill,
+  Baby, Cat, Dog, CreditCard, Coins, Landmark, PiggyBank, Receipt,
   Gift, Scissors, Wrench, Umbrella, Globe
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 
 const ICON_MAP = {
-  Heart, Gamepad2, Home, Utensils, GraduationCap, Bus, 
+  Heart, Gamepad2, Home, Utensils, GraduationCap, Bus,
   ShoppingCart, Users, Dumbbell, Shirt, Apple, Briefcase, Coffee, Plane, FileText, Wallet,
-  Car, Train, Ship, Bike, Fuel, Pizza, Croissant, Beer, Wine, 
-  Tv, Film, Music, Mic, Ticket, Smartphone, Laptop, Monitor, Mouse, 
-  Sofa, Bed, Bath, Lightbulb, Stethoscope, Syringe, Pill, 
-  Baby, Cat, Dog, CreditCard, Coins, Landmark, PiggyBank, Receipt, 
+  Car, Train, Ship, Bike, Fuel, Pizza, Croissant, Beer, Wine,
+  Tv, Film, Music, Mic, Ticket, Smartphone, Laptop, Monitor, Mouse,
+  Sofa, Bed, Bath, Lightbulb, Stethoscope, Syringe, Pill,
+  Baby, Cat, Dog, CreditCard, Coins, Landmark, PiggyBank, Receipt,
   Gift, Scissors, Wrench, Umbrella, Globe
 };
 
@@ -45,12 +45,12 @@ const MySwal = withReactContent(Swal);
 
 function Categories() {
   const navigate = useNavigate();
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState({ type: '', message: '' });
-  const [uiMode, setUiMode] = useState('presets'); 
+  const [uiMode, setUiMode] = useState('presets');
   const [newCat, setNewCat] = useState({ nom: '', couleur: '#3b82f6', icone: 'FileText' });
 
   const presetColors = ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#14b8a6', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e', '#64748b'];
@@ -85,7 +85,7 @@ function Categories() {
       await api.post('/categories', newCat);
       setStatus({ type: 'success', message: t('categories.customSuccess', 'Catégorie sur-mesure créée !') });
       setNewCat({ nom: '', couleur: '#3b82f6', icone: 'FileText' });
-      setUiMode('presets'); 
+      setUiMode('presets');
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
@@ -101,11 +101,11 @@ function Categories() {
       text: t('categories.deleteWarning', "Vos transactions risquent de ne plus avoir de catégorie associée !"),
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#f43f5e', 
-      cancelButtonColor: '#64748b', 
+      confirmButtonColor: '#f43f5e',
+      cancelButtonColor: '#64748b',
       confirmButtonText: t('categories.confirmBtn', 'Oui, supprimer'),
       cancelButtonText: t('categories.cancelBtn', 'Annuler'),
-      background: isDark ? '#1e293b' : '#ffffff', 
+      background: isDark ? '#1e293b' : '#ffffff',
       color: isDark ? '#f8fafc' : '#0f172a',
       borderRadius: '1.5rem'
     }).then(async (result) => {
@@ -146,7 +146,7 @@ function Categories() {
       <Sidebar />
 
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        
+
         {/* 💡 HEADER EPURÉ (Sans boutons langue ni thème) */}
         <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 pl-16 pr-4 md:px-8 flex justify-between items-center transition-colors duration-300">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('categories.pageTitle', 'Paramètres des Catégories')}</h1>
@@ -155,7 +155,7 @@ function Categories() {
         <div className="flex-1 px-4 md:px-8 pb-8 max-w-[1600px] w-full mx-auto overflow-hidden flex flex-col min-h-0">
           {status.message && (
             <div className={`shrink-0 flex items-center gap-2 p-4 rounded-xl mb-6 text-sm font-medium ${status.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400'}`}>
-              {status.type === 'success' ? <CheckCircle2 size={18}/> : <AlertCircle size={18}/>}
+              {status.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
               {status.message}
             </div>
           )}
@@ -192,13 +192,13 @@ function Categories() {
                   <form onSubmit={handleCustomSubmit} className="space-y-6 flex-1 flex flex-col">
                     <div className="shrink-0">
                       <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">{t('categories.name', 'Nom')}</label>
-                      <input type="text" placeholder={t('categories.namePlaceholder', 'Ex: Cinéma...')} required maxLength="20" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" value={newCat.nom} onChange={(e) => setNewCat({...newCat, nom: e.target.value})} />
+                      <input type="text" placeholder={t('categories.namePlaceholder', 'Ex: Cinéma...')} required maxLength="20" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" value={newCat.nom} onChange={(e) => setNewCat({ ...newCat, nom: e.target.value })} />
                     </div>
                     <div className="shrink-0">
                       <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">{t('categories.chooseIcon', 'Choisir une icône')}</label>
                       <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 bg-slate-50 dark:bg-slate-700 p-3 rounded-xl border border-slate-200 dark:border-slate-600 h-40 overflow-y-auto custom-scrollbar">
                         {Object.keys(ICON_MAP).map(iconKey => (
-                          <div key={iconKey} onClick={() => setNewCat({...newCat, icone: iconKey})} className={`p-2 flex justify-center items-center rounded-lg cursor-pointer transition ${newCat.icone === iconKey ? 'text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'}`} style={newCat.icone === iconKey ? { backgroundColor: newCat.couleur } : {}}>
+                          <div key={iconKey} onClick={() => setNewCat({ ...newCat, icone: iconKey })} className={`p-2 flex justify-center items-center rounded-lg cursor-pointer transition ${newCat.icone === iconKey ? 'text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'}`} style={newCat.icone === iconKey ? { backgroundColor: newCat.couleur } : {}}>
                             <RenderIcon name={iconKey} size={20} />
                           </div>
                         ))}
@@ -206,11 +206,11 @@ function Categories() {
                     </div>
                     <div className="shrink-0">
                       <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-3 flex items-center gap-2">
-                        <Palette size={16}/> {t('categories.color', 'Couleur')}
+                        <Palette size={16} /> {t('categories.color', 'Couleur')}
                       </label>
                       <div className="grid grid-cols-6 gap-2 mb-3">
                         {presetColors.map(color => (
-                          <div key={color} onClick={() => setNewCat({...newCat, couleur: color})} className={`w-8 h-8 rounded-full cursor-pointer transition-transform hover:scale-110 ${newCat.couleur === color ? 'ring-2 ring-offset-2 ring-slate-800 dark:ring-slate-300 scale-110' : ''}`} style={{ backgroundColor: color }} />
+                          <div key={color} onClick={() => setNewCat({ ...newCat, couleur: color })} className={`w-8 h-8 rounded-full cursor-pointer transition-transform hover:scale-110 ${newCat.couleur === color ? 'ring-2 ring-offset-2 ring-slate-800 dark:ring-slate-300 scale-110' : ''}`} style={{ backgroundColor: color }} />
                         ))}
                       </div>
                     </div>
@@ -238,7 +238,9 @@ function Categories() {
                             <RenderIcon name={cat.icone} size={24} />
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 dark:text-slate-200">{cat.nom}</h4>
+                            <h4 className="font-bold text-slate-800 dark:text-slate-200">
+                              {t(`categories_list.${cat.nom}`, cat.nom)}
+                            </h4>
                             <p className="text-xs font-mono text-slate-400 dark:text-slate-500 uppercase">{cat.couleur}</p>
                           </div>
                         </div>
