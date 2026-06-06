@@ -51,7 +51,7 @@ function Categories() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState({ type: '', message: '' });
   const [uiMode, setUiMode] = useState('presets');
-  const [newCat, setNewCat] = useState({ nom: '', couleur: '#3b82f6', icone: 'FileText' });
+  const [newCat, setNewCat] = useState({ nom: '', couleur: '#3b82f6', icone: 'FileText', budgetMax: '' });
 
   const presetColors = ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#14b8a6', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e', '#64748b'];
 
@@ -71,12 +71,12 @@ function Categories() {
   const handleQuickAdd = async (preset) => {
     try {
       await api.post('/categories', preset);
-      
+
       const motSucces = i18n.language === 'en' ? 'successfully added!' : 'ajoutée !';
       const nomTraduit = t(`categories_list.${preset.nom}`, preset.nom);
-      
+
       setStatus({ type: 'success', message: `${nomTraduit} ${motSucces}` });
-      
+
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
@@ -93,7 +93,7 @@ function Categories() {
     try {
       await api.post('/categories', newCat);
       setStatus({ type: 'success', message: t('categories.customSuccess', 'Catégorie sur-mesure créée !') });
-      setNewCat({ nom: '', couleur: '#3b82f6', icone: 'FileText' });
+      setNewCat({ nom: '', couleur: '#3b82f6', icone: 'FileText', budgetMax: '' }); // Ajoute budgetMax ici
       setUiMode('presets');
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
@@ -208,6 +208,17 @@ function Categories() {
                     <div className="shrink-0">
                       <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">{t('categories.name', 'Nom')}</label>
                       <input type="text" placeholder={t('categories.namePlaceholder', 'Ex: Cinéma...')} required maxLength="20" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" value={newCat.nom} onChange={(e) => setNewCat({ ...newCat, nom: e.target.value })} />
+                    </div>
+                    <div className="shrink-0 mt-6">
+                      <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">Budget Mensuel Max (DH)</label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 1500 (Laisser vide si pas de limite)"
+                        min="0"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
+                        value={newCat.budgetMax}
+                        onChange={(e) => setNewCat({ ...newCat, budgetMax: e.target.value })}
+                      />
                     </div>
                     <div className="shrink-0">
                       <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">{t('categories.chooseIcon', 'Choisir une icône')}</label>

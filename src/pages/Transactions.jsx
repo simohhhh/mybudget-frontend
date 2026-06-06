@@ -174,16 +174,84 @@ function Transactions() {
       return setStatus({ type: 'error', message: t('transactions.futureDateError', 'La date ne peut pas être dans le futur.') });
     }
 
-    try {
-      await api.post('/transactions', formData);
-      setStatus({ type: 'success', message: t('transactions.addSuccess', 'Opération ajoutée !') });
-      setFormData({ titre: '', montant: '', type: 'depense', categorieId: '', description: '', date: todayString });
-      sessionStorage.removeItem('transactionDraft');
-      fetchData();
-      setTimeout(() => setStatus({ type: '', message: '' }), 3000);
-    } catch (err) {
-      setStatus({ type: 'error', message: err.response?.data?.message || t('transactions.addError', "Erreur d'ajout") });
+    // Fonction d'ajout (pour éviter de répéter le code)
+    const executerAjout = async () => {
+      try {
+        await api.post('/transactions', formData);
+        setStatus({ type: 'success', message: t('transactions.addSuccess', 'Opération ajoutée !') });
+        setFormData({ titre: '', montant: '', type: 'depense', categorieId: '', description: '', date: todayString });
+        sessionStorage.removeItem('transactionDraft');
+        fetchData();
+        setTimeout(() => setStatus({ type: '', message: '' }), 3000);
+      } catch (err) {
+        setStatus({ type: 'error', message: err.response?.data?.message || t('transactions.addError', "Erreur d'ajout") });
+      }
+    };
+
+    // --- LOGIQUE DE BUDGET INTELLIGENTE ---
+    const categoryInfos = categories.find(c => c._id === formData.categorieId);
+    const budgetMax = categoryInfos?.budgetMax || 0;
+
+    if (formData.type === 'depense' && budgetMax > 0) {
+      const txDate = new Date(formData.date);
+
+      // 1. Calculer le total des dépenses de ce mois pour cette catégorie
+      const totalActuel = transactions.reduce((acc, tx) => {
+        const d = new Date(tx.date);
+        if (
+          tx.type === 'depense' &&
+          tx.categorie?._id === formData.categorieId &&
+          d.getMonth() === txDate.getMonth() &&
+          d.getFullYear() === txDate.getFullYear()
+        ) {
+          return acc + tx.montant;
+        }
+        return acc;
+      }, 0);
+
+      const totalApresAjout = totalActuel + Number(formData.montant);
+      const pourcentage = (totalApresAjout / budgetMax) * 100;
+      const isDark = document.documentElement.classList.contains('dark');
+
+      // 2. Alertes intelligentes
+      if (totalApresAjout > budgetMax) {
+        return MySwal.fire({
+          title: 'Budget dépassé !',
+          text: `Cette dépense vous fera dépasser votre limite de ${budgetMax} DH pour cette catégorie. (Total prévu: ${totalApresAjout} DH). Voulez-vous quand même l'ajouter ?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#f43f5e', // Rouge
+          cancelButtonColor: '#64748b',
+          confirmButtonText: 'Oui, forcer l\'ajout',
+          cancelButtonText: 'Annuler',
+          background: isDark ? '#1e293b' : '#ffffff',
+          color: isDark ? '#f8fafc' : '#0f172a',
+          borderRadius: '1.5rem'
+        }).then((result) => {
+          if (result.isConfirmed) executerAjout();
+        });
+      }
+      else if (pourcentage >= 80) {
+        return MySwal.fire({
+          title: 'Attention au budget',
+          text: `Avec cette dépense, vous atteignez ${Math.round(pourcentage)}% de votre budget mensuel pour cette catégorie (${budgetMax} DH max).`,
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3b82f6', // Bleu
+          cancelButtonColor: '#64748b',
+          confirmButtonText: 'Continuer',
+          cancelButtonText: 'Annuler',
+          background: isDark ? '#1e293b' : '#ffffff',
+          color: isDark ? '#f8fafc' : '#0f172a',
+          borderRadius: '1.5rem'
+        }).then((result) => {
+          if (result.isConfirmed) executerAjout();
+        });
+      }
     }
+
+    // Si on n'est pas dans un cas de dépassement, on ajoute normalement
+    executerAjout();
   };
 
   const handleEditClick = (tx) => {
