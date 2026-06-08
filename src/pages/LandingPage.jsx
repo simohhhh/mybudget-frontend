@@ -121,25 +121,23 @@ export default function LandingPage() {
         <section className="max-w-7xl mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center min-h-[75vh]">
           
           <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-start text-left space-y-6">
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-500/30 text-blue-600 dark:text-cyan-400 text-sm font-bold shadow-sm">
-              <Sparkles size={16} className="animate-pulse" /> IA Financière Intégrée
-            </motion.div>
+            
 
             <motion.h1 variants={itemVariants} className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] text-slate-900 dark:text-white tracking-tight">
-              L'avenir de votre <br/>
+              Gérer votre budget <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-cyan-400 dark:to-blue-500">
-                gestion budgétaire.
+                facilement.
               </span>
             </motion.h1>
             
             <motion.p variants={itemVariants} className="text-lg md:text-xl text-slate-600 dark:text-blue-200/80 max-w-lg leading-relaxed">
-              Adawn transforme vos finances. Suivez vos dépenses, analysez vos habitudes et optimisez vos économies grâce à une interface conçue pour la performance.
+              Prenez le contrôle de votre budget, suivez vos dépenses au quotidien et atteignez vos objectifs financiers grâce à des outils intuitifs et sécurisés.
             </motion.p>
             
             <motion.div variants={itemVariants} className="pt-4 flex flex-col sm:flex-row w-full sm:w-auto gap-4">
               <button onClick={handleGetStarted} className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-600 dark:to-cyan-600 text-white font-bold text-lg rounded-2xl shadow-xl shadow-blue-500/30 dark:shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center justify-center gap-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:scale-105 group relative overflow-hidden">
                 <span className="absolute inset-0 w-full h-full bg-white/20 group-hover:animate-[shine_1.5s_ease-in-out_infinite] skew-x-12 -translate-x-full"></span>
-                {t('landing.cta', 'Démarrer l\'expérience')}
+                {t('landing.cta', 'Commencer gratuitement')}
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </motion.div>
@@ -211,7 +209,7 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              La précision financière à l'état pur.
+              Ce que Adawn vous offre
             </h2>
           </motion.div>
 
@@ -243,7 +241,7 @@ export default function LandingPage() {
 
       <footer className="bg-white/50 dark:bg-[#050B14]/50 backdrop-blur-md border-t border-slate-200 dark:border-blue-900/30 py-8 z-10">
         <div className="max-w-7xl mx-auto px-6 text-center text-sm font-medium text-slate-500 dark:text-blue-300/50">
-          <p>© {currentYear} Adawn. Projet de Fin d'Études.</p>
+          <p>© {currentYear} Adawn.</p>
         </div>
       </footer>
 
