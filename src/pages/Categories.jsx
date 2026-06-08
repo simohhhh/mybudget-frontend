@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { useTranslation } from 'react-i18next';
 import {
-  LayoutDashboard, Tag, LogOut, Wallet, PlusCircle, Trash2,
+  LayoutDashboard, Tag, LogOut, Wallet, PlusCircle, Trash2, Pencil,
   AlertCircle, CheckCircle2, Palette, FileText, ArrowLeft, Plus, ArrowRightLeft,
   Heart, Gamepad2, Home, Utensils, GraduationCap, Bus,
   ShoppingCart, Users, Dumbbell, Shirt, Apple, Briefcase, Coffee, Plane,
@@ -93,7 +93,7 @@ function Categories() {
     try {
       await api.post('/categories', newCat);
       setStatus({ type: 'success', message: t('categories.customSuccess', 'Catégorie sur-mesure créée !') });
-      setNewCat({ nom: '', couleur: '#3b82f6', icone: 'FileText', budgetMax: '' }); // Ajoute budgetMax ici
+      setNewCat({ nom: '', couleur: '#3b82f6', icone: 'FileText', budgetMax: '' });
       setUiMode('presets');
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
@@ -104,6 +104,65 @@ function Categories() {
       }
       setStatus({ type: 'error', message: errorMsg });
     }
+  };
+
+  // 💡 NOUVELLE FONCTION POUR MODIFIER LE BUDGET VIA POPUP INLINE
+  const handleEditBudget = (cat) => {
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    MySwal.fire({
+      title: i18n.language === 'en' ? 'Edit Monthly Budget' : 'Modifier le budget mensuel',
+      text: `${t('categories.name', 'Nom')} : ${t(`categories_list.${cat.nom}`, cat.nom)}`,
+      input: 'number',
+      inputValue: cat.budgetMax || '',
+      inputPlaceholder: 'Ex: 1500 (DH)',
+      showCancelButton: true,
+      confirmButtonColor: '#3b82f6',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: i18n.language === 'en' ? 'Save' : 'Enregistrer',
+      cancelButtonText: i18n.language === 'en' ? 'Cancel' : 'Annuler',
+      background: isDark ? '#1e293b' : '#ffffff',
+      color: isDark ? '#f8fafc' : '#0f172a',
+      borderRadius: '1.5rem',
+      inputValidator: (value) => {
+        if (value && Number(value) < 0) {
+          return i18n.language === 'en' ? 'Budget cannot be negative' : 'Le budget ne peut pas être négatif';
+        }
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const nouveauBudget = result.value ? Number(result.value) : 0;
+          
+          await api.put(`/categories/${cat._id}`, {
+            nom: cat.nom,
+            couleur: cat.couleur,
+            icone: cat.icone,
+            budgetMax: nouveauBudget
+          });
+          
+          MySwal.fire({
+            icon: 'success',
+            title: i18n.language === 'en' ? 'Updated!' : 'Mis à jour !',
+            text: i18n.language === 'en' ? 'Budget modified successfully.' : 'Le budget a bien été modifié.',
+            timer: 2000,
+            showConfirmButton: false,
+            background: isDark ? '#1e293b' : '#ffffff',
+            color: isDark ? '#f8fafc' : '#0f172a'
+          });
+          
+          fetchCategories();
+        } catch (err) {
+          MySwal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Impossible de modifier le budget.',
+            background: isDark ? '#1e293b' : '#ffffff',
+            color: isDark ? '#f8fafc' : '#0f172a'
+          });
+        }
+      }
+    });
   };
 
   const handleDelete = (id) => {
@@ -267,12 +326,23 @@ function Categories() {
                             <h4 className="font-bold text-slate-800 dark:text-slate-200">
                               {t(`categories_list.${cat.nom}`, cat.nom)}
                             </h4>
-                            <p className="text-xs font-mono text-slate-400 dark:text-slate-500 uppercase">{cat.couleur}</p>
+                            {/* Affichage du budget sous la couleur pour le jury */}
+                            <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5">
+                              {cat.budgetMax > 0 ? `Budget: ${cat.budgetMax} DH` : 'Pas de limite'}
+                            </p>
                           </div>
                         </div>
-                        <button onClick={() => handleDelete(cat._id)} className="text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 transition p-2 bg-slate-50 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-slate-600 rounded-xl opacity-0 group-hover:opacity-100" title="Supprimer">
-                          <Trash2 size={18} />
-                        </button>
+                        
+                        {/* 💡 CONTENEUR DES BOUTONS D'ACTION AVEC LE NOUVEAU BOUTON MODIFIER */}
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition duration-200">
+                          <button onClick={() => handleEditBudget(cat)} className="text-slate-400 dark:text-slate-500 hover:text-blue-500 dark:hover:text-blue-400 transition p-2 bg-slate-50 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-slate-600 rounded-xl" title={i18n.language === 'en' ? 'Edit Budget' : 'Modifier le budget'}>
+                            <Pencil size={16} />
+                          </button>
+                          <button onClick={() => handleDelete(cat._id)} className="text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition p-2 bg-slate-50 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-slate-600 rounded-xl" title="Supprimer">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+
                       </div>
                     ))}
                     {categories.length === 0 && (
