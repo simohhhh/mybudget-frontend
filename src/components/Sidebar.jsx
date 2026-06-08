@@ -9,7 +9,6 @@ function Sidebar() {
   const location = useLocation(); 
   const { t } = useTranslation(); 
   
-  // NOUVEAU : État pour ouvrir/fermer le menu sur téléphone
   const [isOpen, setIsOpen] = useState(false); 
 
   const isActive = (path) => location.pathname === path;
@@ -35,7 +34,6 @@ function Sidebar() {
 
   useEffect(() => {
     fetchCurrentUser();
-
     const handleProfileUpdate = () => {
       const storedUser = localStorage.getItem('utilisateur');
       if (storedUser) setUser(JSON.parse(storedUser));
@@ -45,7 +43,6 @@ function Sidebar() {
     return () => window.removeEventListener('profilMisAJour', handleProfileUpdate);
   }, []);
 
-  // Fonction pour naviguer ET fermer le menu sur mobile
   const handleNavigate = (path) => {
     navigate(path);
     setIsOpen(false);
@@ -53,39 +50,39 @@ function Sidebar() {
 
   return (
     <>
-      {/* 📱 BOUTON HAMBURGER (Visible uniquement sur mobile) */}
+      {/* 📱 BOUTON HAMBURGER */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-5 left-4 z-50 p-2 bg-white dark:bg-slate-800 rounded-xl shadow-md text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 transition-all"
+        className="lg:hidden fixed top-5 left-4 z-50 p-2 bg-white/80 backdrop-blur-md dark:bg-slate-800/80 rounded-xl shadow-lg shadow-indigo-500/10 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 transition-all"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* 🌑 OVERLAY SOMBRE (Ferme le menu si on clique à côté) */}
+      {/* 🌑 OVERLAY SOMBRE */}
       {isOpen && (
         <div 
           onClick={() => setIsOpen(false)} 
-          className="lg:hidden fixed inset-0 bg-slate-900/50 z-40"
+          className="lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
         ></div>
       )}
 
-      {/* 📌 LA BARRE LATÉRALE */}
-      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-800 border-r border-slate-100 dark:border-slate-700/50 flex flex-col transition-transform duration-300 lg:static lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      {/* 📌 LA BARRE LATÉRALE (Ajout de Glassmorphism et d'une ombre douce) */}
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border-r border-slate-100 dark:border-slate-700/50 shadow-2xl shadow-indigo-500/5 dark:shadow-none flex flex-col transition-transform duration-300 lg:static lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         
-        {/* WIDGET UTILISATEUR */}
+        {/* WIDGET UTILISATEUR (Effet Lévitation + Ombre) */}
         <div 
           onClick={() => handleNavigate('/Profile')} 
           title={t('profile.pageTitle', 'Accéder à mon Profil')}
-          className="px-6 py-5 mx-4 mt-20 lg:mt-8 mb-4 bg-slate-50 dark:bg-slate-700/30 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-2xl border border-slate-100 dark:border-slate-700/50 cursor-pointer transition-colors group shrink-0"
+          className="px-6 py-5 mx-4 mt-20 lg:mt-8 mb-4 bg-slate-50 dark:bg-slate-700/30 hover:bg-white dark:hover:bg-slate-700/50 rounded-2xl border border-slate-100 dark:border-slate-700/50 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10 group shrink-0"
         >
           <div className="flex items-center gap-3">
             <div className="relative shrink-0">
               <img 
                 src={user.avatar || `https://ui-avatars.com/api/?name=${user.nom.replace(' ', '+')}&background=eff6ff&color=2563eb&bold=true`} 
                 alt="Avatar" 
-                className="w-11 h-11 rounded-full border-2 border-white dark:border-slate-800 shadow-sm group-hover:scale-105 transition-transform duration-300 object-cover" 
+                className="w-11 h-11 rounded-full border-2 border-white dark:border-slate-800 shadow-md group-hover:scale-105 transition-transform duration-300 object-cover" 
               />
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full"></div>
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-sm"></div>
             </div>
             <div className="overflow-hidden flex-1">
               <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -98,16 +95,16 @@ function Sidebar() {
           </div>
         </div>
         
-        {/* MENU PRINCIPAL */}
+        {/* MENU PRINCIPAL (Effet hover slide et dégradés) */}
         <nav className="flex-1 px-4 flex flex-col overflow-y-auto custom-scrollbar">
-          <div className="space-y-1">
-            <div onClick={() => handleNavigate('/Dashboard')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold cursor-pointer transition-colors ${isActive('/Dashboard') ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'}`}>
+          <div className="space-y-2">
+            <div onClick={() => handleNavigate('/Dashboard')} className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Dashboard') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 text-blue-600 dark:text-blue-400 shadow-sm border border-blue-100/50 dark:border-blue-800/50' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium hover:translate-x-1'}`}>
               <LayoutDashboard size={18} /> {t('sidebar.dashboard', 'Dashboard')}
             </div>
-            <div onClick={() => handleNavigate('/Transactions')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold cursor-pointer transition-colors ${isActive('/Transactions') ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'}`}>
+            <div onClick={() => handleNavigate('/Transactions')} className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Transactions') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 text-blue-600 dark:text-blue-400 shadow-sm border border-blue-100/50 dark:border-blue-800/50' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium hover:translate-x-1'}`}>
               <ArrowRightLeft size={18} /> {t('sidebar.transactions', 'Transactions')}
             </div>
-            <div onClick={() => handleNavigate('/Categories')} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold cursor-pointer transition-colors ${isActive('/Categories') ? 'bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'}`}>
+            <div onClick={() => handleNavigate('/Categories')} className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Categories') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 text-blue-600 dark:text-blue-400 shadow-sm border border-blue-100/50 dark:border-blue-800/50' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium hover:translate-x-1'}`}>
               <Tag size={18} /> {t('sidebar.categories', 'Catégories')}
             </div>
           </div>
