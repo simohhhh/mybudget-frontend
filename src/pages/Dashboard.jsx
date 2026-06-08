@@ -20,8 +20,10 @@ function Dashboard() {
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useTheme();
   const { t, i18n } = useTranslation(); 
+  const isEng = i18n.language === 'en'; // 💡 Variable pour la traduction
   
   const [allTransactions, setAllTransactions] = useState([]);
+  const [categories, setCategories] = useState([]); // 💡 Ajout des catégories
   const [loading, setLoading] = useState(true);
 
   const [timeFilter, setTimeFilter] = useState('month');
@@ -34,8 +36,13 @@ function Dashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const resTx = await api.get('/transactions');
+      // 💡 On récupère à la fois les transactions et les catégories
+      const [resTx, resCat] = await Promise.all([
+        api.get('/transactions'),
+        api.get('/categories')
+      ]);
       setAllTransactions(resTx.data);
+      setCategories(resCat.data);
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -47,7 +54,7 @@ function Dashboard() {
 
   const formatDevise = (montant) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
-      .format(montant).replace('$', '') + ' MAD';
+      .format(montant).replace('$', '') + (isEng ? ' MAD' : ' DH');
   };
 
   const formatDeviseCompact = (montant) => {
@@ -56,7 +63,7 @@ function Dashboard() {
         notation: "compact", 
         compactDisplay: "short", 
         maximumFractionDigits: 1 
-      }).format(montant) + ' MAD';
+      }).format(montant) + (isEng ? ' MAD' : ' DH');
     }
     return formatDevise(montant);
   };
@@ -90,6 +97,21 @@ function Dashboard() {
 
   const filteredTransactions = getFilteredTransactions();
 
+  // 💡 CALCUL DE L'ÉTAT DES BUDGETS MENSUELS
+  const budgetTracking = categories
+    .filter(cat => cat.budgetMax > 0)
+    .map(cat => {
+      const spentThisMonth = filteredTransactions
+        .filter(tx => tx.type === 'depense' && tx.categorie?._id === cat._id)
+        .reduce((sum, tx) => sum + tx.montant, 0);
+
+      const percentage = Math.round((spentThisMonth / cat.budgetMax) * 100);
+      const isOverBudget = spentThisMonth > cat.budgetMax;
+
+      return { ...cat, spent: spentThisMonth, percentage, isOverBudget };
+    })
+    .sort((a, b) => b.percentage - a.percentage); // Trie du plus critique au moins critique
+
   const genererRapportMensuel = () => {
     const [year, month] = reportMonth.split('-');
     const transactionsDuMois = allTransactions.filter(tx => {
@@ -118,7 +140,7 @@ function Dashboard() {
     const doc = new jsPDF();
     doc.setFontSize(22);
     doc.setTextColor(30, 27, 75);
-    doc.text(`Rapport financier du mois: ${dateAffichage.charAt(0).toUpperCase() + dateAffichage.slice(1)}`, 14, 20);
+    doc.text(`Rapport financier : ${dateAffichage.charAt(0).toUpperCase() + dateAffichage.slice(1)}`, 14, 20);
 
     doc.setFontSize(10);
     doc.setTextColor(100);
@@ -148,10 +170,9 @@ function Dashboard() {
     const tableRows = transactionsDuMois.map(tx => [
       new Date(tx.date).toLocaleDateString(i18n.language || 'fr-FR'),
       tx.titre,
-      // 💡 MODIFICATION : Traduction de la catégorie dans le PDF
       tx.categorie ? t(`categories_list.${tx.categorie.nom}`, tx.categorie.nom) : t('transactions.general', 'Général'),
       tx.type === 'revenu' ? 'Revenu' : 'Dépense',
-      `${tx.type === 'revenu' ? '+' : '-'}${tx.montant} MAD`
+      `${tx.type === 'revenu' ? '+' : '-'}${tx.montant} ${isEng ? 'MAD' : 'DH'}`
     ]);
 
     autoTable(doc, {
@@ -194,7 +215,6 @@ function Dashboard() {
   const optionsDoughnut = { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } };
 
   const doughnutDepenses = {
-    // 💡 MODIFICATION : Traduction des labels du graphique Dépenses
     labels: depensesData.length > 0 ? depensesData.map(c => t(`categories_list.${c.nom}`, c.nom)) : [t('dashboard.empty', 'Aucune dépense')],
     datasets: [{
       data: depensesData.length > 0 ? depensesData.map(c => c.total) : [1],
@@ -204,7 +224,6 @@ function Dashboard() {
   };
 
   const doughnutRevenus = {
-    // 💡 MODIFICATION : Traduction des labels du graphique Revenus
     labels: revenusData.length > 0 ? revenusData.map(c => t(`categories_list.${c.nom}`, c.nom)) : [t('dashboard.empty', 'Aucun revenu')],
     datasets: [{
       data: revenusData.length > 0 ? revenusData.map(c => c.total) : [1],
@@ -213,7 +232,7 @@ function Dashboard() {
     }]
   };
 
-  if (loading) return <div className="flex h-screen items-center justify-center bg-[#f4f7fb] dark:bg-slate-900 dark:text-white transition-colors duration-300">Chargement...</div>;
+  if (loading) return <div className="flex h-screen items-center justify-center bg-[#f4f7fb] dark:bg-slate-900 dark:text-white transition-colors duration-300">{isEng ? 'Loading...' : 'Chargement...'}</div>;
 
   return (
     <>
@@ -223,7 +242,6 @@ function Dashboard() {
 
         <div className="flex-1 flex flex-col h-full overflow-hidden">
           <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900 transition-colors duration-300">
-            
             <div className="flex items-center gap-4">
               <button onClick={() => navigate('/Transactions')} className="bg-slate-900 dark:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm hover:bg-slate-800 dark:hover:bg-blue-700 transition">
                 <PlusCircle size={16} /> <span className="hidden sm:inline ml-2">{t('header.add', 'Ajouter')}</span>
@@ -235,7 +253,7 @@ function Dashboard() {
                 </div>
                 <button onClick={genererRapportMensuel} className="flex items-center justify-center p-2.5 md:px-4 md:py-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold transition-colors" title="Générer le rapport">
                   <Download size={18} /> 
-                  <span className="hidden sm:inline ml-2 text-sm">Rapport</span>
+                  <span className="hidden sm:inline ml-2 text-sm">{isEng ? 'Report' : 'Rapport'}</span>
                 </button>
               </div>
             </div>
@@ -268,13 +286,62 @@ function Dashboard() {
 
               {showCustomPicker && (
                 <div className="flex items-center gap-3 px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 rounded-xl animate-fade-in transition-colors">
-                  <span className="text-sm font-bold text-indigo-800 dark:text-indigo-300">Du:</span>
+                  <span className="text-sm font-bold text-indigo-800 dark:text-indigo-300">{isEng ? 'From:' : 'Du:'}</span>
                   <input type="date" value={customDates.start} onChange={(e) => setCustomDates({ ...customDates, start: e.target.value })} className="bg-white dark:bg-slate-700 border-none rounded-lg px-2 py-1 text-sm outline-none text-slate-700 dark:text-slate-200 shadow-sm" />
-                  <span className="text-sm font-bold text-indigo-800 dark:text-indigo-300 ml-2">Au:</span>
+                  <span className="text-sm font-bold text-indigo-800 dark:text-indigo-300 ml-2">{isEng ? 'To:' : 'Au:'}</span>
                   <input type="date" value={customDates.end} onChange={(e) => setCustomDates({ ...customDates, end: e.target.value })} className="bg-white dark:bg-slate-700 border-none rounded-lg px-2 py-1 text-sm outline-none text-slate-700 dark:text-slate-200 shadow-sm" />
                 </div>
               )}
             </div>
+
+            {/* 💡 NOUVEAU BLOC : SUIVI DES BUDGETS (S'affiche seulement pour "Ce mois") */}
+            {timeFilter === 'month' && budgetTracking.length > 0 && (
+              <div className="mb-8 animate-fade-in shrink-0">
+                <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider ml-2">
+                  {isEng ? 'Monthly Budgets Status' : 'État des budgets mensuels'}
+                </h3>
+                <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
+                  {budgetTracking.map(cat => {
+                    let barColor = 'bg-emerald-500';
+                    if (cat.percentage >= 100) barColor = 'bg-rose-500';
+                    else if (cat.percentage >= 80) barColor = 'bg-orange-500';
+
+                    return (
+                      <div key={cat._id} className="min-w-[280px] bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col gap-3 transition-transform hover:-translate-y-1">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: cat.couleur }}></div>
+                            <span className="font-bold text-[15px] text-slate-800 dark:text-slate-200 truncate">
+                              {t(`categories_list.${cat.nom}`, cat.nom)}
+                            </span>
+                          </div>
+                          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md">
+                            {cat.spent} / {cat.budgetMax} {isEng ? 'MAD' : 'DH'}
+                          </span>
+                        </div>
+                        
+                        <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                          <div className={`h-full rounded-full transition-all duration-700 ${barColor}`} style={{ width: `${Math.min(cat.percentage, 100)}%` }}></div>
+                        </div>
+                        
+                        <div className="flex justify-between items-center mt-0.5">
+                          <span className="text-[12px] text-slate-400 font-medium">
+                            {cat.percentage >= 100 
+                              ? (isEng ? 'Budget exceeded' : 'Budget dépassé') 
+                              : `${cat.percentage}% ${isEng ? 'used' : 'utilisé'}`}
+                          </span>
+                          <span className={`text-[12px] font-bold ${cat.isOverBudget ? 'text-rose-500' : 'text-emerald-500'}`}>
+                            {cat.isOverBudget 
+                              ? `-${cat.spent - cat.budgetMax} ${isEng ? 'MAD' : 'DH'}` 
+                              : `${isEng ? 'Left' : 'Reste'} ${cat.budgetMax - cat.spent} ${isEng ? 'MAD' : 'DH'}`}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
@@ -301,7 +368,6 @@ function Dashboard() {
                       const pct = totalRevenus > 0 ? Math.round((cat.total / totalRevenus) * 100) : 0;
                       return (
                         <div key={idx}>
-                          {/* 💡 MODIFICATION : Traduction dans la liste des détails Revenus */}
                           <div className="flex justify-between text-sm mb-1"><span className="font-bold text-slate-700 dark:text-slate-300">{t(`categories_list.${cat.nom}`, cat.nom)}</span><span className="text-slate-500 dark:text-slate-400">{pct}%</span></div>
                           <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5"><div className="h-1.5 rounded-full" style={{ width: `${pct}%`, backgroundColor: cat.couleur }}></div></div>
                         </div>
@@ -335,7 +401,6 @@ function Dashboard() {
                       const pct = totalDepenses > 0 ? Math.round((cat.total / totalDepenses) * 100) : 0;
                       return (
                         <div key={idx}>
-                          {/* 💡 MODIFICATION : Traduction dans la liste des détails Dépenses */}
                           <div className="flex justify-between text-sm mb-1"><span className="font-bold text-slate-700 dark:text-slate-300">{t(`categories_list.${cat.nom}`, cat.nom)}</span><span className="text-slate-500 dark:text-slate-400">{pct}%</span></div>
                           <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5"><div className="h-1.5 rounded-full" style={{ width: `${pct}%`, backgroundColor: cat.couleur }}></div></div>
                         </div>
@@ -373,7 +438,6 @@ function Dashboard() {
                       <div key={tx._id} className="flex justify-between items-center border-b border-slate-50 dark:border-slate-700/50 pb-2.5 last:border-0 last:pb-0">
                         <div>
                           <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{tx.titre}</h4>
-                          {/* 💡 MODIFICATION : Traduction de la catégorie dans la liste des transactions récentes */}
                           <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
                             {tx.categorie ? t(`categories_list.${tx.categorie.nom}`, tx.categorie.nom) : t('transactions.general', 'Général')} • {formaterDateCourte(tx.date)}
                           </p>

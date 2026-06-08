@@ -19,6 +19,7 @@ const MySwal = withReactContent(Swal);
 function Transactions() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const isEng = i18n.language === 'en'; // 💡 Variable globale pour la langue
 
   const [categories, setCategories] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -27,16 +28,13 @@ function Transactions() {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // États pour la modale de modification
   const [editingTx, setEditingTx] = useState(null);
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
 
-  // --- NOUVEAUX ÉTATS POUR L'IA VOCALE ---
   const [isListening, setIsListening] = useState(false);
   const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const [transcript, setTranscript] = useState('');
 
-  // Stocker la date d'aujourd'hui pour bloquer le futur
   const todayString = new Date().toISOString().split('T')[0];
 
   const [formData, setFormData] = useState(() => {
@@ -83,11 +81,10 @@ function Transactions() {
     setEditingTx({ ...editingTx, date: date.toISOString().split('T')[0] });
   };
 
-  // --- NOUVELLES FONCTIONS IA VOCALE (TTS & STT) ---
   const parler = (texte) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(texte);
-      utterance.lang = i18n.language === 'en' ? 'en-US' : 'fr-FR';
+      utterance.lang = isEng ? 'en-US' : 'fr-FR';
       utterance.rate = 1.1;
       window.speechSynthesis.speak(utterance);
     }
@@ -108,12 +105,25 @@ function Transactions() {
       const extractedData = response.data;
       setFormData(prev => ({ ...prev, ...extractedData }));
 
-      parler(`J'ai préparé la transaction : ${extractedData.titre} pour ${extractedData.montant} dirhams.`);
-      MySwal.fire({ icon: 'success', title: 'Succès', text: 'Champs remplis par la voix !', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+      parler(isEng 
+        ? `I prepared the transaction: ${extractedData.titre} for ${extractedData.montant} dirhams.`
+        : `J'ai préparé la transaction : ${extractedData.titre} pour ${extractedData.montant} dirhams.`
+      );
+      
+      MySwal.fire({ 
+        icon: 'success', 
+        title: isEng ? 'Success' : 'Succès', 
+        text: isEng ? 'Fields filled by voice!' : 'Champs remplis par la voix !', 
+        toast: true, position: 'top-end', timer: 2000, showConfirmButton: false 
+      });
 
     } catch (error) {
-      parler("Désolé, je n'ai pas pu analyser votre demande.");
-      MySwal.fire({ icon: 'error', title: 'Erreur IA', text: 'Impossible de traiter la demande vocale.' });
+      parler(isEng ? "Sorry, I couldn't process your request." : "Désolé, je n'ai pas pu analyser votre demande.");
+      MySwal.fire({ 
+        icon: 'error', 
+        title: isEng ? 'AI Error' : 'Erreur IA', 
+        text: isEng ? 'Could not process voice request.' : 'Impossible de traiter la demande vocale.' 
+      });
     } finally {
       setIsProcessingVoice(false);
       setTimeout(() => setTranscript(''), 4000);
@@ -124,42 +134,36 @@ function Transactions() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      MySwal.fire({ icon: 'error', title: 'Erreur', text: "Votre navigateur ne supporte pas la reconnaissance vocale." });
+      MySwal.fire({ 
+        icon: 'error', 
+        title: isEng ? 'Error' : 'Erreur', 
+        text: isEng ? "Your browser doesn't support voice recognition." : "Votre navigateur ne supporte pas la reconnaissance vocale." 
+      });
       return;
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = i18n.language === 'en' ? 'en-US' : 'fr-FR';
+    recognition.lang = isEng ? 'en-US' : 'fr-FR';
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
-    recognition.onstart = () => {
-      setIsListening(true);
-      setTranscript('');
-    };
+    recognition.onstart = () => { setIsListening(true); setTranscript(''); };
 
     recognition.onresult = (event) => {
       let texteEnCours = '';
       let estFini = false;
-
       for (let i = 0; i < event.results.length; i++) {
         texteEnCours += event.results[i][0].transcript;
         if (event.results[i].isFinal) estFini = true;
       }
-
       setTranscript(texteEnCours);
-
       if (estFini) {
         recognition.stop();
         envoyerTexteA_IA(texteEnCours);
       }
     };
 
-    recognition.onerror = (event) => {
-      setIsListening(false);
-      console.error("Erreur micro:", event.error);
-    };
-
+    recognition.onerror = (event) => { setIsListening(false); };
     recognition.onend = () => setIsListening(false);
     recognition.start();
   };
@@ -169,12 +173,8 @@ function Transactions() {
     setStatus({ type: '', message: '' });
 
     if (!formData.categorieId) return setStatus({ type: 'error', message: t('transactions.chooseCategoryError', 'Choisissez une catégorie.') });
+    if (formData.date > todayString) return setStatus({ type: 'error', message: t('transactions.futureDateError', 'La date ne peut pas être dans le futur.') });
 
-    if (formData.date > todayString) {
-      return setStatus({ type: 'error', message: t('transactions.futureDateError', 'La date ne peut pas être dans le futur.') });
-    }
-
-    // Fonction d'ajout (pour éviter de répéter le code)
     const executerAjout = async () => {
       try {
         await api.post('/transactions', formData);
@@ -188,22 +188,15 @@ function Transactions() {
       }
     };
 
-    // --- LOGIQUE DE BUDGET INTELLIGENTE ---
+    // --- LOGIQUE DE BUDGET INTELLIGENTE (100% BILINGUE) ---
     const categoryInfos = categories.find(c => c._id === formData.categorieId);
     const budgetMax = categoryInfos?.budgetMax || 0;
 
     if (formData.type === 'depense' && budgetMax > 0) {
       const txDate = new Date(formData.date);
-
-      // 1. Calculer le total des dépenses de ce mois pour cette catégorie
       const totalActuel = transactions.reduce((acc, tx) => {
         const d = new Date(tx.date);
-        if (
-          tx.type === 'depense' &&
-          tx.categorie?._id === formData.categorieId &&
-          d.getMonth() === txDate.getMonth() &&
-          d.getFullYear() === txDate.getFullYear()
-        ) {
+        if (tx.type === 'depense' && tx.categorie?._id === formData.categorieId && d.getMonth() === txDate.getMonth() && d.getFullYear() === txDate.getFullYear()) {
           return acc + tx.montant;
         }
         return acc;
@@ -213,17 +206,18 @@ function Transactions() {
       const pourcentage = (totalApresAjout / budgetMax) * 100;
       const isDark = document.documentElement.classList.contains('dark');
 
-      // 2. Alertes intelligentes
       if (totalApresAjout > budgetMax) {
         return MySwal.fire({
-          title: 'Budget dépassé !',
-          text: `Cette dépense vous fera dépasser votre limite de ${budgetMax} DH pour cette catégorie. (Total prévu: ${totalApresAjout} DH). Voulez-vous quand même l'ajouter ?`,
+          title: isEng ? 'Budget Exceeded!' : 'Budget dépassé !',
+          text: isEng 
+            ? `This expense will exceed your limit of ${budgetMax} MAD for this category. (Projected total: ${totalApresAjout} MAD). Do you still want to add it?`
+            : `Cette dépense vous fera dépasser votre limite de ${budgetMax} DH pour cette catégorie. (Total prévu: ${totalApresAjout} DH). Voulez-vous quand même l'ajouter ?`,
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonColor: '#f43f5e', // Rouge
+          confirmButtonColor: '#f43f5e',
           cancelButtonColor: '#64748b',
-          confirmButtonText: 'Oui, forcer l\'ajout',
-          cancelButtonText: 'Annuler',
+          confirmButtonText: isEng ? 'Yes, force add' : 'Oui, forcer l\'ajout',
+          cancelButtonText: isEng ? 'Cancel' : 'Annuler',
           background: isDark ? '#1e293b' : '#ffffff',
           color: isDark ? '#f8fafc' : '#0f172a',
           borderRadius: '1.5rem'
@@ -233,14 +227,16 @@ function Transactions() {
       }
       else if (pourcentage >= 80) {
         return MySwal.fire({
-          title: 'Attention au budget',
-          text: `Avec cette dépense, vous atteignez ${Math.round(pourcentage)}% de votre budget mensuel pour cette catégorie (${budgetMax} DH max).`,
+          title: isEng ? 'Budget Warning' : 'Attention au budget',
+          text: isEng 
+            ? `With this expense, you will reach ${Math.round(pourcentage)}% of your monthly budget for this category (${budgetMax} MAD max).`
+            : `Avec cette dépense, vous atteignez ${Math.round(pourcentage)}% de votre budget mensuel pour cette catégorie (${budgetMax} DH max).`,
           icon: 'info',
           showCancelButton: true,
-          confirmButtonColor: '#3b82f6', // Bleu
+          confirmButtonColor: '#3b82f6',
           cancelButtonColor: '#64748b',
-          confirmButtonText: 'Continuer',
-          cancelButtonText: 'Annuler',
+          confirmButtonText: isEng ? 'Continue' : 'Continuer',
+          cancelButtonText: isEng ? 'Cancel' : 'Annuler',
           background: isDark ? '#1e293b' : '#ffffff',
           color: isDark ? '#f8fafc' : '#0f172a',
           borderRadius: '1.5rem'
@@ -250,7 +246,6 @@ function Transactions() {
       }
     }
 
-    // Si on n'est pas dans un cas de dépassement, on ajoute normalement
     executerAjout();
   };
 
@@ -265,12 +260,11 @@ function Transactions() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!editingTx.categorieId) {
-      MySwal.fire({ icon: 'warning', title: 'Oups', text: t('transactions.chooseCategoryError', 'Choisissez une catégorie.') });
+      MySwal.fire({ icon: 'warning', title: isEng ? 'Oops' : 'Oups', text: t('transactions.chooseCategoryError', 'Choisissez une catégorie.') });
       return;
     }
-
     if (editingTx.date > todayString) {
-      MySwal.fire({ icon: 'warning', title: 'Oups', text: t('transactions.futureDateError', 'La date ne peut pas être dans le futur.') });
+      MySwal.fire({ icon: 'warning', title: isEng ? 'Oops' : 'Oups', text: t('transactions.futureDateError', 'La date ne peut pas être dans le futur.') });
       return;
     }
 
@@ -278,9 +272,9 @@ function Transactions() {
       await api.put(`/transactions/${editingTx._id}`, editingTx);
       setEditingTx(null);
       fetchData();
-      MySwal.fire({ icon: 'success', title: 'Modifiée !', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+      MySwal.fire({ icon: 'success', title: isEng ? 'Updated!' : 'Modifiée !', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
     } catch (error) {
-      MySwal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de modifier la transaction.' });
+      MySwal.fire({ icon: 'error', title: isEng ? 'Error' : 'Erreur', text: isEng ? 'Could not update transaction.' : 'Impossible de modifier la transaction.' });
     }
   };
 
@@ -330,7 +324,7 @@ function Transactions() {
     return <IconComponent size={size} className={className} />;
   };
 
-  const formatDevise = (montant) => new Intl.NumberFormat('en-US').format(montant) + ' DH';
+  const formatDevise = (montant) => new Intl.NumberFormat('en-US').format(montant) + (isEng ? ' MAD' : ' DH');
   const formaterDate = (date) => new Date(date).toLocaleDateString(i18n.language || 'fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
 
   const selectedCategory = categories.find(c => c._id === formData.categorieId);
@@ -344,9 +338,7 @@ function Transactions() {
     return titreMatch || categorieMatch || descriptionMatch;
   });
 
-  const handleNaviguerVersCategories = () => {
-    navigate('/Categories');
-  };
+  const handleNaviguerVersCategories = () => { navigate('/Categories'); };
 
   if (loading) return <div className="flex h-screen items-center justify-center bg-[#f4f7fb] dark:bg-slate-900 text-slate-800 dark:text-white">Chargement...</div>;
 
@@ -354,14 +346,12 @@ function Transactions() {
     <>
       <div className="h-screen overflow-hidden bg-[#f4f7fb] dark:bg-slate-900 flex font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300">
         <Sidebar />
-
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
           <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900">
             <h1 className="text-2xl font-bold">{t('transactions.pageTitle', 'Saisie des transactions')}</h1>
           </header>
 
           <div className="flex-1 px-4 md:px-8 pb-24 lg:pb-8 max-w-[1600px] w-full mx-auto overflow-y-auto lg:overflow-hidden flex flex-col lg:min-h-0">
-
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:min-h-0 lg:flex-1">
 
               {/* === FORMULAIRE D'AJOUT (Gauche) === */}
@@ -375,9 +365,7 @@ function Transactions() {
                       onClick={handleVoiceInput}
                       disabled={isProcessingVoice}
                       className={`p-3 rounded-full transition-all shadow-md flex items-center justify-center
-                        ${isListening
-                          ? 'bg-rose-500 text-white animate-pulse'
-                          : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 hover:bg-blue-200'} 
+                        ${isListening ? 'bg-rose-500 text-white animate-pulse' : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 hover:bg-blue-200'} 
                         ${isProcessingVoice ? 'opacity-50 cursor-not-allowed' : ''}`}
                       title={t('transactions.voiceBtnTitle', 'Ajouter par la voix')}
                     >
@@ -390,7 +378,7 @@ function Transactions() {
                       <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
                       <p className="text-sm font-medium text-slate-700 dark:text-slate-300 italic">
                         "{transcript}"
-                        {isProcessingVoice && <span className="ml-1 text-blue-500 font-bold not-italic">... Analyse par l'IA en cours</span>}
+                        {isProcessingVoice && <span className="ml-1 text-blue-500 font-bold not-italic">{isEng ? '... AI Processing' : '... Analyse par l\'IA en cours'}</span>}
                       </p>
                     </div>
                   )}
@@ -439,7 +427,6 @@ function Transactions() {
                         {selectedCategory ? (
                           <div className="flex items-center gap-3">
                             <div className="w-6 h-6 rounded-full flex items-center justify-center text-white" style={{ backgroundColor: selectedCategory.couleur }}><RenderIcon name={selectedCategory.icone} size={14} /></div>
-                            {/* 💡 MODIFICATION ICI POUR L'AJOUT */}
                             <span className="font-bold text-sm">
                               {t(`categories_list.${selectedCategory.nom}`, selectedCategory.nom)}
                             </span>
@@ -450,7 +437,6 @@ function Transactions() {
                       {isCategoryOpen && (
                         <>
                           <div className="fixed inset-0 z-10" onClick={() => setIsCategoryOpen(false)}></div>
-
                           <div className="absolute z-20 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-xl rounded-xl overflow-hidden flex flex-col">
                             <div className="max-h-48 overflow-y-auto custom-scrollbar py-2">
                               {categories.map(cat => (
@@ -464,14 +450,9 @@ function Transactions() {
                                 </div>
                               ))}
                             </div>
-
                             <div className="p-2 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
                               <div
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleNaviguerVersCategories();
-                                  setIsCategoryOpen(false);
-                                }}
+                                onClick={(e) => { e.stopPropagation(); handleNaviguerVersCategories(); setIsCategoryOpen(false); }}
                                 className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-50 dark:bg-blue-500/10 hover:bg-blue-100 dark:hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold rounded-lg cursor-pointer transition-colors"
                               >
                                 <PlusCircle size={18} />
@@ -494,7 +475,7 @@ function Transactions() {
                     </div>
 
                     <button type="submit" className="mt-6 w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm">
-                      {t('transactions.addBtn', 'Ajouter')} {formData.montant ? `${formData.montant} DH` : ''}
+                      {t('transactions.addBtn', 'Ajouter')} {formData.montant ? `${formData.montant} ${isEng ? 'MAD' : 'DH'}` : ''}
                     </button>
                   </form>
                 </div>
@@ -568,7 +549,7 @@ function Transactions() {
           <div className="bg-white dark:bg-slate-800 w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
             <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0">
-              <h2 className="text-xl font-bold text-slate-800 dark:text-white">Modifier la transaction</h2>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white">{isEng ? 'Edit Transaction' : 'Modifier la transaction'}</h2>
               <button onClick={() => setEditingTx(null)} className="p-2 text-slate-400 hover:text-rose-500 bg-slate-50 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-500/20 rounded-full transition-colors">
                 <X size={20} />
               </button>
@@ -612,7 +593,6 @@ function Transactions() {
                     {editSelectedCategory ? (
                       <div className="flex items-center gap-3">
                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-white" style={{ backgroundColor: editSelectedCategory.couleur }}><RenderIcon name={editSelectedCategory.icone} size={14} /></div>
-                        {/* 💡 MODIFICATION ICI POUR LA MODIFICATION */}
                         <span className="font-bold text-sm">
                           {t(`categories_list.${editSelectedCategory.nom}`, editSelectedCategory.nom)}
                         </span>
@@ -651,7 +631,7 @@ function Transactions() {
 
             <div className="p-6 border-t border-slate-100 dark:border-slate-700 shrink-0">
               <button form="edit-form" type="submit" className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition shadow-lg text-sm">
-                Enregistrer les modifications
+                {isEng ? 'Save Changes' : 'Enregistrer les modifications'}
               </button>
             </div>
 

@@ -46,6 +46,7 @@ const MySwal = withReactContent(Swal);
 function Categories() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const isEng = i18n.language === 'en'; // 💡 Variable globale pour la langue
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,18 +72,16 @@ function Categories() {
   const handleQuickAdd = async (preset) => {
     try {
       await api.post('/categories', preset);
-
-      const motSucces = i18n.language === 'en' ? 'successfully added!' : 'ajoutée !';
+      const motSucces = isEng ? 'successfully added!' : 'ajoutée !';
       const nomTraduit = t(`categories_list.${preset.nom}`, preset.nom);
-
       setStatus({ type: 'success', message: `${nomTraduit} ${motSucces}` });
-
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
-      let errorMsg = err.response?.data?.message || t('categories.addError', "Erreur d'ajout");
-      if (errorMsg.includes('existante')) {
-        errorMsg = i18n.language === 'en' ? 'This category already exists.' : 'Catégorie déjà existante.';
+      // 💡 CORRECTION DU TEXTE DEJA EXISTANTE BILINGUE
+      let errorMsg = err.response?.data?.message || t('categories.addError', isEng ? "Add error" : "Erreur d'ajout");
+      if (errorMsg.includes('existante') || errorMsg.includes('utilisé')) {
+        errorMsg = isEng ? 'This category already exists.' : 'Catégorie déjà existante.';
       }
       setStatus({ type: 'error', message: errorMsg });
     }
@@ -98,42 +97,41 @@ function Categories() {
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
-      let errorMsg = err.response?.data?.message || t('categories.addError', "Erreur de création");
-      if (errorMsg.includes('existante')) {
-        errorMsg = i18n.language === 'en' ? 'This category already exists.' : 'Catégorie déjà existante.';
+      // 💡 CORRECTION DU TEXTE DEJA EXISTANTE BILINGUE
+      let errorMsg = err.response?.data?.message || t('categories.addError', isEng ? "Creation error" : "Erreur de création");
+      if (errorMsg.includes('existante') || errorMsg.includes('utilisé')) {
+        errorMsg = isEng ? 'This category already exists.' : 'Catégorie déjà existante.';
       }
       setStatus({ type: 'error', message: errorMsg });
     }
   };
 
-  // 💡 NOUVELLE FONCTION POUR MODIFIER LE BUDGET VIA POPUP INLINE
   const handleEditBudget = (cat) => {
     const isDark = document.documentElement.classList.contains('dark');
     
     MySwal.fire({
-      title: i18n.language === 'en' ? 'Edit Monthly Budget' : 'Modifier le budget mensuel',
+      title: isEng ? 'Edit Monthly Budget' : 'Modifier le budget mensuel',
       text: `${t('categories.name', 'Nom')} : ${t(`categories_list.${cat.nom}`, cat.nom)}`,
       input: 'number',
       inputValue: cat.budgetMax || '',
-      inputPlaceholder: 'Ex: 1500 (DH)',
+      inputPlaceholder: isEng ? 'Ex: 1500 (MAD)' : 'Ex: 1500 (DH)',
       showCancelButton: true,
       confirmButtonColor: '#3b82f6',
       cancelButtonColor: '#64748b',
-      confirmButtonText: i18n.language === 'en' ? 'Save' : 'Enregistrer',
-      cancelButtonText: i18n.language === 'en' ? 'Cancel' : 'Annuler',
+      confirmButtonText: isEng ? 'Save' : 'Enregistrer',
+      cancelButtonText: isEng ? 'Cancel' : 'Annuler',
       background: isDark ? '#1e293b' : '#ffffff',
       color: isDark ? '#f8fafc' : '#0f172a',
       borderRadius: '1.5rem',
       inputValidator: (value) => {
         if (value && Number(value) < 0) {
-          return i18n.language === 'en' ? 'Budget cannot be negative' : 'Le budget ne peut pas être négatif';
+          return isEng ? 'Budget cannot be negative' : 'Le budget ne peut pas être négatif';
         }
       }
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const nouveauBudget = result.value ? Number(result.value) : 0;
-          
           await api.put(`/categories/${cat._id}`, {
             nom: cat.nom,
             couleur: cat.couleur,
@@ -143,20 +141,19 @@ function Categories() {
           
           MySwal.fire({
             icon: 'success',
-            title: i18n.language === 'en' ? 'Updated!' : 'Mis à jour !',
-            text: i18n.language === 'en' ? 'Budget modified successfully.' : 'Le budget a bien été modifié.',
+            title: isEng ? 'Updated!' : 'Mis à jour !',
+            text: isEng ? 'Budget modified successfully.' : 'Le budget a bien été modifié.',
             timer: 2000,
             showConfirmButton: false,
             background: isDark ? '#1e293b' : '#ffffff',
             color: isDark ? '#f8fafc' : '#0f172a'
           });
-          
           fetchCategories();
         } catch (err) {
           MySwal.fire({
             icon: 'error',
-            title: 'Erreur',
-            text: 'Impossible de modifier le budget.',
+            title: isEng ? 'Error' : 'Erreur',
+            text: isEng ? 'Could not modify budget.' : 'Impossible de modifier le budget.',
             background: isDark ? '#1e293b' : '#ffffff',
             color: isDark ? '#f8fafc' : '#0f172a'
           });
@@ -211,15 +208,13 @@ function Categories() {
     return <IconComponent size={size} className={className} />;
   };
 
-  if (loading) return <div className="flex h-screen items-center justify-center bg-[#f4f7fb] dark:bg-slate-900 dark:text-white transition-colors duration-300">Chargement...</div>;
+  if (loading) return <div className="flex h-screen items-center justify-center bg-[#f4f7fb] dark:bg-slate-900 dark:text-white transition-colors duration-300">{isEng ? 'Loading...' : 'Chargement...'}</div>;
 
   return (
     <div className="h-screen overflow-hidden bg-[#f4f7fb] dark:bg-slate-900 flex font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <Sidebar />
 
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-
-        {/* HEADER EPURÉ */}
         <header className="h-20 shrink-0 bg-[#f4f7fb] dark:bg-slate-900 pl-16 pr-4 md:px-8 flex justify-between items-center transition-colors duration-300">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{t('categories.pageTitle', 'Paramètres des Catégories')}</h1>
         </header>
@@ -269,10 +264,10 @@ function Categories() {
                       <input type="text" placeholder={t('categories.namePlaceholder', 'Ex: Cinéma...')} required maxLength="20" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" value={newCat.nom} onChange={(e) => setNewCat({ ...newCat, nom: e.target.value })} />
                     </div>
                     <div className="shrink-0 mt-6">
-                      <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">Budget Mensuel Max (DH)</label>
+                      <label className="block text-sm font-bold text-slate-600 dark:text-slate-400 mb-2">{isEng ? 'Max Monthly Budget (MAD)' : 'Budget Mensuel Max (DH)'}</label>
                       <input
                         type="number"
-                        placeholder="Ex: 1500 (Laisser vide si pas de limite)"
+                        placeholder={isEng ? 'Ex: 1500 (Leave empty if no limit)' : 'Ex: 1500 (Laisser vide si pas de limite)'}
                         min="0"
                         className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
                         value={newCat.budgetMax}
@@ -326,19 +321,19 @@ function Categories() {
                             <h4 className="font-bold text-slate-800 dark:text-slate-200">
                               {t(`categories_list.${cat.nom}`, cat.nom)}
                             </h4>
-                            {/* Affichage du budget sous la couleur pour le jury */}
                             <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5">
-                              {cat.budgetMax > 0 ? `Budget: ${cat.budgetMax} DH` : 'Pas de limite'}
+                              {cat.budgetMax > 0 
+                                ? (isEng ? `Budget: ${cat.budgetMax} MAD` : `Budget: ${cat.budgetMax} DH`) 
+                                : (isEng ? 'No limit' : 'Pas de limite')}
                             </p>
                           </div>
                         </div>
                         
-                        {/* 💡 CONTENEUR DES BOUTONS D'ACTION AVEC LE NOUVEAU BOUTON MODIFIER */}
                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition duration-200">
-                          <button onClick={() => handleEditBudget(cat)} className="text-slate-400 dark:text-slate-500 hover:text-blue-500 dark:hover:text-blue-400 transition p-2 bg-slate-50 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-slate-600 rounded-xl" title={i18n.language === 'en' ? 'Edit Budget' : 'Modifier le budget'}>
+                          <button onClick={() => handleEditBudget(cat)} className="text-slate-400 dark:text-slate-500 hover:text-blue-500 dark:hover:text-blue-400 transition p-2 bg-slate-50 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-slate-600 rounded-xl" title={isEng ? 'Edit Budget' : 'Modifier le budget'}>
                             <Pencil size={16} />
                           </button>
-                          <button onClick={() => handleDelete(cat._id)} className="text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition p-2 bg-slate-50 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-slate-600 rounded-xl" title="Supprimer">
+                          <button onClick={() => handleDelete(cat._id)} className="text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition p-2 bg-slate-50 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-slate-600 rounded-xl" title={t('categories.deleteTitle', 'Supprimer')}>
                             <Trash2 size={16} />
                           </button>
                         </div>
