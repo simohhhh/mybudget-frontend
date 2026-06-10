@@ -69,15 +69,18 @@ function Categories() {
 
   useEffect(() => { fetchCategories(); }, []);
 
+  // 💡 CORRECTION : Ajout sécurisé d'un budgetMax par défaut
   const handleQuickAdd = async (preset) => {
     try {
-      await api.post('/categories', preset);
+      const payload = { ...preset, budgetMax: 0 }; // Sécurisation pour MongoDB
+      await api.post('/categories', payload);
       const motSucces = isEng ? 'successfully added!' : 'ajoutée !';
       const nomTraduit = t(`categories_list.${preset.nom}`, preset.nom);
       setStatus({ type: 'success', message: `${nomTraduit} ${motSucces}` });
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
+      console.error("Détails erreur QuickAdd:", err.response?.data);
       let errorMsg = err.response?.data?.message || t('categories.addError', isEng ? "Add error" : "Erreur d'ajout");
       if (errorMsg.includes('existante') || errorMsg.includes('utilisé')) {
         errorMsg = isEng ? 'This category already exists.' : 'Catégorie déjà existante.';
@@ -86,16 +89,25 @@ function Categories() {
     }
   };
 
+  // 💡 CORRECTION : Formatage du champ budgetMax avant l'envoi
   const handleCustomSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/categories', newCat);
+      const payload = {
+        nom: newCat.nom,
+        couleur: newCat.couleur,
+        icone: newCat.icone,
+        budgetMax: newCat.budgetMax ? Number(newCat.budgetMax) : 0 // Transforme "" en 0, sinon garde le nombre
+      };
+
+      await api.post('/categories', payload);
       setStatus({ type: 'success', message: t('categories.customSuccess', 'Catégorie sur-mesure créée !') });
       setNewCat({ nom: '', couleur: '#3b82f6', icone: 'FileText', budgetMax: '' });
       setUiMode('presets');
       fetchCategories();
       setTimeout(() => setStatus({ type: '', message: '' }), 3000);
     } catch (err) {
+      console.error("Détails erreur CustomSubmit:", err.response?.data);
       let errorMsg = err.response?.data?.message || t('categories.addError', isEng ? "Creation error" : "Erreur de création");
       if (errorMsg.includes('existante') || errorMsg.includes('utilisé')) {
         errorMsg = isEng ? 'This category already exists.' : 'Catégorie déjà existante.';

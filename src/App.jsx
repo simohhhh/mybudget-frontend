@@ -13,6 +13,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 // 💡 IMPORT DE LA PAGE SUPPORT ICI
 import Support from './pages/Support';
+import Budgets from './pages/Budgets';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token');
@@ -77,6 +78,7 @@ function App() {
         
         {/* route par defaut */}
         <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/Budgets" element={<Budgets />} />
         
       </Routes>
     </Router>
