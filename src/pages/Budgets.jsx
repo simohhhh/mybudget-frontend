@@ -3,23 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { PlusCircle, AlertTriangle, Info } from 'lucide-react';
 import api from '../services/api';
 import Sidebar from '../components/Sidebar';
-import { useTheme } from '../context/ThemeContext';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 import { useTranslation } from 'react-i18next';
-
-const MySwal = withReactContent(Swal);
 
 function Budgets() {
   const navigate = useNavigate();
-  const { isDarkMode } = useTheme(); // Conservé uniquement pour adapter les thèmes des alertes pop-ups
   const { t, i18n } = useTranslation(); 
   const isEng = i18n.language === 'en'; 
   
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]); 
   const [loading, setLoading] = useState(true);
-  const [hasNotified, setHasNotified] = useState(false);
 
   const [reportMonth, setReportMonth] = useState(() => {
     const d = new Date();
@@ -64,40 +57,7 @@ function Budgets() {
     })
     .sort((a, b) => b.percentage - a.percentage);
 
-  // Système d'alerte automatique
-  useEffect(() => {
-    if (!loading && budgetTracking.length > 0 && !hasNotified) {
-      const overBudgetCats = budgetTracking.filter(b => b.isOverBudget);
-      const nearBudgetCats = budgetTracking.filter(b => b.percentage >= 80 && !b.isOverBudget);
-
-      if (overBudgetCats.length > 0) {
-        MySwal.fire({
-          toast: true, position: 'top-end', icon: 'error',
-          title: isEng ? 'Budget Exceeded!' : 'Budget Dépassé !',
-          text: isEng ? `${overBudgetCats.length} categories exceeded their limit.` : `${overBudgetCats.length} catégories sont en dépassement.`,
-          showConfirmButton: false, timer: 5000,
-          background: isDarkMode ? '#050B14' : '#ffffff',
-          color: isDarkMode ? '#f8fafc' : '#0f172a',
-          iconColor: '#f43f5e',
-          customClass: { popup: 'border border-rose-500/30 shadow-lg shadow-rose-500/20' }
-        });
-      } else if (nearBudgetCats.length > 0) {
-        MySwal.fire({
-          toast: true, position: 'top-end', icon: 'warning',
-          title: isEng ? 'Near Limit' : 'Attention au Budget',
-          text: isEng ? `${nearBudgetCats.length} categories are near their limit.` : `${nearBudgetCats.length} catégories sont à plus de 80%.`,
-          showConfirmButton: false, timer: 5000,
-          background: isDarkMode ? '#050B14' : '#ffffff',
-          color: isDarkMode ? '#f8fafc' : '#0f172a',
-          iconColor: '#f59e0b',
-          customClass: { popup: 'border border-orange-500/30 shadow-lg shadow-orange-500/20' }
-        });
-      }
-      setHasNotified(true);
-    }
-  }, [loading, budgetTracking, hasNotified, isDarkMode, isEng]);
-
-  if (loading) return <div className="flex h-screen items-center justify-center bg-[#f4f7fb] dark:bg-[#050B14] dark:text-blue-50">Chargement...</div>;
+  if (loading) return <div className="flex h-screen items-center justify-center bg-[#f4f7fb] dark:bg-[#050B14] dark:text-blue-50 transition-colors duration-300">Chargement...</div>;
 
   return (
     <div className="h-screen overflow-hidden bg-[#f4f7fb] dark:bg-[#050B14] flex font-sans text-slate-800 dark:text-blue-50 transition-colors duration-300">
@@ -113,7 +73,12 @@ function Budgets() {
 
           <div className="flex items-center gap-3">
             <div className="flex items-center bg-white dark:bg-[#0A192F] border border-slate-200 dark:border-blue-500/30 rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden px-3">
-              <input type="month" value={reportMonth} onChange={(e) => { setReportMonth(e.target.value); setHasNotified(false); }} className="bg-transparent border-none text-[11px] md:text-sm font-bold text-slate-700 dark:text-blue-100 outline-none py-2 cursor-pointer" />
+              <input 
+                type="month" 
+                value={reportMonth} 
+                onChange={(e) => setReportMonth(e.target.value)} 
+                className="bg-transparent border-none text-[11px] md:text-sm font-bold text-slate-700 dark:text-blue-100 outline-none py-2 cursor-pointer" 
+              />
             </div>
           </div>
         </header>
