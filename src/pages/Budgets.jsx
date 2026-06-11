@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, Sun, Moon, AlertTriangle, Info } from 'lucide-react';
+import { PlusCircle, AlertTriangle, Info } from 'lucide-react';
 import api from '../services/api';
 import Sidebar from '../components/Sidebar';
 import { useTheme } from '../context/ThemeContext';
@@ -12,7 +12,7 @@ const MySwal = withReactContent(Swal);
 
 function Budgets() {
   const navigate = useNavigate();
-  const { isDarkMode, toggleDarkMode } = useTheme();
+  const { isDarkMode } = useTheme(); // Conservé uniquement pour adapter les thèmes des alertes pop-ups
   const { t, i18n } = useTranslation(); 
   const isEng = i18n.language === 'en'; 
   
@@ -114,13 +114,6 @@ function Budgets() {
           <div className="flex items-center gap-3">
             <div className="flex items-center bg-white dark:bg-[#0A192F] border border-slate-200 dark:border-blue-500/30 rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden px-3">
               <input type="month" value={reportMonth} onChange={(e) => { setReportMonth(e.target.value); setHasNotified(false); }} className="bg-transparent border-none text-[11px] md:text-sm font-bold text-slate-700 dark:text-blue-100 outline-none py-2 cursor-pointer" />
-            </div>
-
-            <div onClick={toggleDarkMode} className="flex items-center gap-3 px-4 py-2 bg-white dark:bg-[#0A192F] border border-slate-200 dark:border-blue-500/30 text-slate-600 dark:text-cyan-300 rounded-xl font-bold cursor-pointer hover:bg-slate-50 dark:hover:bg-[#112240] transition-all duration-300 hover:shadow-md shadow-sm">
-              <span className="text-sm hidden sm:block">
-                {isDarkMode ? t('header.lightMode', 'Mode Clair') : t('header.darkMode', 'Mode Sombre')}
-              </span>
-              {isDarkMode ? <Sun size={18} className="text-amber-500 dark:text-amber-400 dark:drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]" /> : <Moon size={18} className="text-indigo-500" />}
             </div>
           </div>
         </header>

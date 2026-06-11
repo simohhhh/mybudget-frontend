@@ -11,9 +11,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './pages/Profile';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-// 💡 IMPORT DE LA PAGE SUPPORT ICI
 import Support from './pages/Support';
 import Budgets from './pages/Budgets';
+// IMPORTATION DES NOTIFICATIONS
+import Notifications from './pages/Notifications';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token');
@@ -21,65 +22,23 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* ==========================================
-            ROUTES PUBLIQUES
-        ========================================== */}
         <Route path="/" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <LandingPage />} />
         <Route path="/Login" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <Login />} />
         <Route path="/Register" element={isAuthenticated ? <Navigate to="/Dashboard" /> : <Register />} />
         <Route path="/ForgotPassword" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        {/* ==========================================
-            ROUTES PRIVÉES
-        ========================================== */}
-        <Route 
-          path="/Dashboard" 
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/Transactions" 
-          element={
-            <ProtectedRoute>
-              <Transactions />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/Categories" 
-          element={
-            <ProtectedRoute>
-              <Categories />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/Profile" 
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          } 
-        />
+        <Route path="/Dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/Transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+        <Route path="/Categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
+        <Route path="/Profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/Support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
+        <Route path="/Budgets" element={<ProtectedRoute><Budgets /></ProtectedRoute>} />
         
-        {/* 👇 NOUVELLE ROUTE SUPPORT SÉCURISÉE 👇 */}
-        <Route 
-          path="/Support" 
-          element={
-            <ProtectedRoute>
-              <Support />
-            </ProtectedRoute>
-          } 
-        />
+        {/* NOUVELLE ROUTE DES NOTIFICATIONS */}
+        <Route path="/Notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
         
-        {/* route par defaut */}
         <Route path="*" element={<Navigate to="/" />} />
-        <Route path="/Budgets" element={<Budgets />} />
-        
       </Routes>
     </Router>
   );
