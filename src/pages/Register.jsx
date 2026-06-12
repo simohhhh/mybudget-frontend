@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
-import { Mail, Lock, User, Wallet, ArrowRight, AlertCircle, CheckCircle2, KeyRound, ArrowLeft, Moon } from 'lucide-react';
+import { Mail, Lock, User, Wallet, ArrowRight, AlertCircle, CheckCircle2, KeyRound, ArrowLeft, Moon, Sun } from 'lucide-react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { useTheme } from '../context/ThemeContext';

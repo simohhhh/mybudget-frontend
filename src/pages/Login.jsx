@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext'; 
 import api from '../services/api';
-import { Mail, Lock, Wallet, ArrowRight, AlertCircle, Sun, Moon } from 'lucide-react';
+import { Mail, Lock, Wallet, ArrowRight, AlertCircle, Sun, Moon, ArrowLeft } from 'lucide-react';
 
 function Login() {
   const [email, setEmail] = useState('');
