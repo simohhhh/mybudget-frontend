@@ -67,7 +67,7 @@ function Budgets() {
         <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb]/80 dark:bg-[#050B14]/80 backdrop-blur-md sticky top-0 z-30 transition-colors duration-300 border-b border-transparent dark:border-blue-900/30">
           <div className="flex items-center gap-4">
             <h1 className="text-xl md:text-2xl font-extrabold text-slate-800 dark:text-white">
-              {isEng ? 'Smart Budgets' : 'Budgets Intelligents'}
+              {isEng ? 'budget monitoring' : 'suivi de budgets'}
             </h1>
           </div>
 

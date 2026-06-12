@@ -102,21 +102,18 @@ function Sidebar() {
             <div onClick={() => handleNavigate('/Dashboard')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Dashboard') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-300'}`}>
               <LayoutDashboard size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.dashboard', 'Dashboard')}</span>}
             </div>
-            
+             <div onClick={() => handleNavigate('/Transactions')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Transactions') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-300'}`}>
+              <ArrowRightLeft size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.transactions', 'Transactions')}</span>}
+            </div>
+            <div onClick={() => handleNavigate('/Categories')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Categories') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-300'}`}>
+              <Tag size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.categories', 'Catégories')}</span>}
+            </div>
             <div onClick={() => handleNavigate('/Budgets')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Budgets') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-300'}`}>
               <Wallet size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.budgets', 'Budgets')}</span>}
             </div>
 
             <div onClick={() => handleNavigate('/Notifications')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Notifications') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-300'}`}>
               <Bell size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{isEng ? 'Notifications' : 'Notifications'}</span>}
-            </div>
-            
-            <div onClick={() => handleNavigate('/Transactions')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Transactions') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-300'}`}>
-              <ArrowRightLeft size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.transactions', 'Transactions')}</span>}
-            </div>
-            
-            <div onClick={() => handleNavigate('/Categories')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Categories') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-300'}`}>
-              <Tag size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.categories', 'Catégories')}</span>}
             </div>
           </div>
         </nav>

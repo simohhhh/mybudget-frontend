@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
-import { Mail, Lock, User, Wallet, ArrowRight, AlertCircle, CheckCircle2, KeyRound, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, Wallet, ArrowRight, AlertCircle, CheckCircle2, KeyRound, ArrowLeft, Moon } from 'lucide-react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { useTheme } from '../context/ThemeContext';
 
 const MySwal = withReactContent(Swal);
 
@@ -14,7 +15,7 @@ function Register() {
   
   const [etape, setEtape] = useState(1); 
   const [otpCode, setOtpCode] = useState('');
-  
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
 
   const handleInscription = async (e) => {
@@ -87,6 +88,12 @@ function Register() {
         <span>Accueil</span>
       </Link>
       {/* =================================== */}
+       <button
+        onClick={toggleDarkMode}
+        className="fixed top-6 right-6 p-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
+      >
+        {isDarkMode ? <Sun size={20} className="text-amber-500" /> : <Moon size={20} className="text-blue-600" />}
+      </button>
 
       <div className="w-full max-w-md bg-white dark:bg-slate-800 p-8 sm:p-12 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700">
         
