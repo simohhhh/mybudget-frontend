@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Tag, ArrowRightLeft, Menu, X, ChevronLeft, ChevronRight, Wallet, Bell, LogOut } from 'lucide-react'; 
 import { useTranslation } from 'react-i18next'; 
 import api from '../services/api'; 
-import Swal from 'sweetalert2'; // 💡 Import de SweetAlert2 pour la confirmation de déconnexion
+import Swal from 'sweetalert2';
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -44,7 +44,6 @@ function Sidebar() {
     setIsOpen(false);
   };
 
-  // 💡 FONCTION DE DÉCONNEXION SÉCURISÉE AVEC CONFIRMATION VISUELLE
   const handleLogout = () => {
     const isDark = document.documentElement.classList.contains('dark');
     Swal.fire({
@@ -70,13 +69,16 @@ function Sidebar() {
 
   return (
     <>
+      {/* BOUTON HAMBURGER MOBILE */}
       <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden fixed top-5 left-4 z-50 p-2 bg-white/80 backdrop-blur-md dark:bg-[#0A192F]/80 rounded-xl shadow-lg shadow-indigo-500/10 text-slate-800 dark:text-white border border-slate-200 dark:border-blue-500/30 transition-all">
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
+      {/* OVERLAY SOMBRE MOBILE */}
       {isOpen && <div onClick={() => setIsOpen(false)} className="lg:hidden fixed inset-0 bg-slate-900/40 dark:bg-[#050B14]/80 backdrop-blur-sm z-40 transition-opacity"></div>}
 
-      <div className={`relative fixed inset-y-0 left-0 z-40 bg-white/95 dark:bg-[#0A192F]/95 backdrop-blur-xl border-r border-slate-100 dark:border-blue-500/20 shadow-2xl flex flex-col transition-all duration-300 ease-in-out lg:static lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'} ${isCollapsed ? 'w-20' : 'w-64'}`}>
+      {/* 💡 LA CORRECTION EST ICI : Remplacement de "relative fixed" par "fixed lg:relative" */}
+      <div className={`fixed lg:relative inset-y-0 left-0 z-40 bg-white/95 dark:bg-[#0A192F]/95 backdrop-blur-xl border-r border-slate-100 dark:border-blue-500/20 shadow-2xl flex flex-col transition-all duration-300 ease-in-out lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'} ${isCollapsed ? 'w-20' : 'w-64'}`}>
         
         <button onClick={() => setIsCollapsed(!isCollapsed)} className="hidden lg:flex absolute -right-3.5 top-10 w-7 h-7 bg-white dark:bg-[#050B14] border border-slate-200 dark:border-cyan-500/50 rounded-full items-center justify-center text-slate-500 dark:text-cyan-400 cursor-pointer hover:scale-110 shadow-md transition-all z-50 group">
           {isCollapsed ? <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" /> : <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />}
@@ -119,7 +121,6 @@ function Sidebar() {
           </div>
         </nav>
 
-        {/* 💡 CONTENEUR DU BOUTON DE DÉCONNEXION EN BAS DE SIDEBAR */}
         <div className="p-4 border-t border-slate-100 dark:border-blue-500/20 shrink-0">
           <div 
             onClick={handleLogout}
