@@ -10,7 +10,7 @@ function Sidebar() {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const isEng = i18n.language === 'en';
-  
+
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -76,7 +76,7 @@ function Sidebar() {
       {isOpen && <div onClick={() => setIsOpen(false)} className="lg:hidden fixed inset-0 bg-slate-900/40 dark:bg-[#050B14]/80 backdrop-blur-sm z-40 transition-opacity"></div>}
 
       <div className={`fixed lg:relative inset-y-0 left-0 z-40 bg-white/95 dark:bg-[#0A192F]/95 backdrop-blur-xl border-r border-slate-100 dark:border-blue-500/20 shadow-2xl flex flex-col transition-all duration-300 ease-in-out lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'} ${isCollapsed ? 'w-20' : 'w-64'}`}>
-        
+
         <button onClick={() => setIsCollapsed(!isCollapsed)} className="hidden lg:flex absolute -right-3.5 top-10 w-7 h-7 bg-white dark:bg-[#050B14] border border-slate-200 dark:border-cyan-500/50 rounded-full items-center justify-center text-slate-500 dark:text-cyan-400 cursor-pointer hover:scale-110 shadow-md transition-all z-50 group">
           {isCollapsed ? <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" /> : <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />}
         </button>
@@ -93,13 +93,18 @@ function Sidebar() {
             </div>
           )}
         </div>
-        
+
         <nav className="flex-1 px-4 flex flex-col overflow-y-auto custom-scrollbar">
           <div className="space-y-2">
             <div onClick={() => handleNavigate('/Dashboard')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Dashboard') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-slate-100 dark:hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-600 dark:hover:text-cyan-300'}`}>
               <LayoutDashboard size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.dashboard', 'Dashboard')}</span>}
             </div>
-            
+            <div onClick={() => handleNavigate('/Transactions')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Transactions') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-slate-100 dark:hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-600 dark:hover:text-cyan-300'}`}>
+              <ArrowRightLeft size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.transactions', 'Transactions')}</span>}
+            </div>
+            <div onClick={() => handleNavigate('/Categories')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Categories') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-slate-100 dark:hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-600 dark:hover:text-cyan-300'}`}>
+              <Tag size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.categories', 'Catégories')}</span>}
+            </div>
             <div onClick={() => handleNavigate('/Budgets')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Budgets') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-slate-100 dark:hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-600 dark:hover:text-cyan-300'}`}>
               <Wallet size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.budgets', 'Budgets')}</span>}
             </div>
@@ -107,19 +112,15 @@ function Sidebar() {
             <div onClick={() => handleNavigate('/Notifications')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Notifications') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-slate-100 dark:hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-600 dark:hover:text-cyan-300'}`}>
               <Bell size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{isEng ? 'Notifications' : 'Notifications'}</span>}
             </div>
-            
-            <div onClick={() => handleNavigate('/Transactions')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Transactions') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-slate-100 dark:hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-600 dark:hover:text-cyan-300'}`}>
-              <ArrowRightLeft size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.transactions', 'Transactions')}</span>}
-            </div>
-            
-            <div onClick={() => handleNavigate('/Categories')} className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 ${isActive('/Categories') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-600/20 dark:to-cyan-600/20 text-blue-600 dark:text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 dark:text-blue-200/60 hover:bg-slate-100 dark:hover:bg-[#112240] hover:translate-x-1 hover:text-cyan-600 dark:hover:text-cyan-300'}`}>
-              <Tag size={isCollapsed ? 22 : 18} className="shrink-0 transition-all duration-300" /> {!isCollapsed && <span className="truncate">{t('sidebar.categories', 'Catégories')}</span>}
-            </div>
+
+
+
+
           </div>
         </nav>
 
         <div className="p-4 border-t border-slate-100 dark:border-blue-500/20 shrink-0">
-          <div 
+          <div
             onClick={handleLogout}
             title={isCollapsed ? t('profile.logout', 'Déconnexion') : ''}
             className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3.5 rounded-xl font-bold cursor-pointer transition-all duration-300 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 dark:text-rose-400`}
