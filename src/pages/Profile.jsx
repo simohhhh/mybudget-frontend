@@ -216,7 +216,7 @@ function Profile() {
   };
 
   return (
-    <div className="h-[100dvh] overflow-hidden bg-[#f4f7fb] dark:bg-slate-900 flex font-sans">
+    <div className="relative w-full h-[100dvh] overflow-hidden bg-[#f4f7fb] dark:bg-slate-900 flex font-sans">
       <Sidebar />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <header className="h-20 shrink-0 pl-16 pr-4 md:px-8 flex justify-between items-center bg-[#f4f7fb] dark:bg-slate-900">
@@ -245,18 +245,29 @@ function Profile() {
           </div>
         </header>
 
-        <div className="flex-1 px-4 md:px-8 pb-24 lg:pb-12 overflow-y-auto transform-gpu custom-scrollbar">
+        {/* 💡 Correction du Glitch: suppression de "transform-gpu" pour éviter les bugs de scroll sur mobile webkit */}
+        <div className="flex-1 px-4 md:px-8 pb-24 lg:pb-12 overflow-y-auto custom-scrollbar">
           <div className="max-w-[1400px] mx-auto mt-4">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
               
               {/* 1. INFORMATIONS PERSONNELLES */}
               <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700/50 flex flex-col">
-                <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center gap-5 mb-8">
+                  
+                  {/* 💡 Ajout du Badge Caméra et ajustement taille */}
                   <div className="relative group cursor-pointer rounded-full shrink-0" onClick={() => document.getElementById('avatar-upload').click()}>
-                    <img src={utilisateur.avatar || `https://ui-avatars.com/api/?name=${utilisateur.nom.replace(' ', '+')}&background=eff6ff&color=2563eb&bold=true`} alt="Avatar" className="w-16 h-16 rounded-full object-cover border-4 border-blue-50 dark:border-slate-700/50 group-hover:opacity-70 transition-opacity shadow-sm" />
-                    <div className="absolute inset-0 bg-slate-900/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><Camera size={20} className="text-white" /></div>
+                    <img 
+                      src={utilisateur.avatar || `https://ui-avatars.com/api/?name=${utilisateur.nom.replace(' ', '+')}&background=eff6ff&color=2563eb&bold=true`} 
+                      alt="Avatar" 
+                      className="w-20 h-20 rounded-full object-cover border-4 border-blue-50 dark:border-slate-700/50 group-hover:opacity-80 transition-all shadow-sm" 
+                    />
+                    {/* Badge Caméra permanent */}
+                    <div className="absolute -bottom-1 -right-1 p-2 bg-blue-600 text-white rounded-full shadow-md border-2 border-white dark:border-slate-800 group-hover:scale-110 transition-transform">
+                      <Camera size={14} />
+                    </div>
                     <input type="file" id="avatar-upload" hidden accept="image/*" onChange={handleAvatarChange} />
                   </div>
+                  
                   <div>
                     <h2 className="text-xl font-bold text-slate-800 dark:text-white">{t('profile.personalInfo', 'Informations Personnelles')}</h2>
                   </div>
