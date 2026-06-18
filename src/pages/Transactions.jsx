@@ -437,8 +437,7 @@ function Transactions() {
                         onChange={handleCaptureReceipt}
                         className="hidden" 
                       />
-
-                      {/* BOUTON VOCAL (EXISTANT) */}
+                      {/* BOUTON V OCAL (EXISTANT) */}
                       <button
                         type="button"
                         onClick={handleVoiceInput}
