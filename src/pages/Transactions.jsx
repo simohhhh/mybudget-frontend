@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { useTranslation } from 'react-i18next';
 import {
-  LayoutDashboard, Tag, LogOut, Wallet, PlusCircle, Trash2, Pencil, X, AlertCircle, CheckCircle2, ArrowRightLeft, ChevronDown, Search, Mic,
-  Heart, Gamepad2, Home, Utensils, GraduationCap, Bus, ShoppingCart, Users, Dumbbell, Shirt, Apple, Briefcase, Coffee, Plane, FileText, Car, Train, Ship, Bike, Fuel, Pizza, Croissant, Beer, Wine, Tv, Film, Music, Ticket, Smartphone, Laptop, Monitor, Mouse, Sofa, Bed, Bath, Lightbulb, Stethoscope, Syringe, Pill, Baby, Cat, Dog, CreditCard, Coins, Landmark, PiggyBank, Receipt, Gift, Scissors, Wrench, Umbrella, Globe
+  LayoutDashboard, Tag, LogOut, Wallet, PlusCircle, Trash2, Pencil, X, AlertCircle, CheckCircle2, ArrowRightLeft, ChevronDown, Search, Mic, Camera, Heart, Gamepad2, Home, Utensils, GraduationCap, Bus, ShoppingCart, Users, Dumbbell, Shirt, Apple, Briefcase, Coffee, Plane, FileText, Car, Train, Ship, Bike, Fuel, Pizza, Croissant, Beer, Wine, Tv, Film, Music, Ticket, Smartphone, Laptop, Monitor, Mouse, Sofa, Bed, Bath, Lightbulb, Stethoscope, Syringe, Pill, Baby, Cat, Dog, CreditCard, Coins, Landmark, PiggyBank, Receipt, Gift, Scissors, Wrench, Umbrella, Globe
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 
@@ -34,6 +33,61 @@ function Transactions() {
   const [isListening, setIsListening] = useState(false);
   const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const fileInputRef = useRef(null);
+  const [isScanning, setIsScanning] = useState(false);
+
+  const handleCaptureReceipt = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsScanning(true);
+    MySwal.fire({
+      title: isEng ? 'Scanning receipt...' : 'Analyse du ticket...',
+      text: isEng ? 'Gemini is reading your image' : 'Gemini déchiffre votre image',
+      allowOutsideClick: false,
+      didOpen: () => { MySwal.showLoading(); }
+    });
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      const base64String = reader.result.split(',')[1];
+      try {
+        const categoriesReduites = categories.map(c => ({ _id: c._id, nom: c.nom }));
+        
+        const response = await api.post('/transactions/scan-receipt', {
+          imageBase64: base64String,
+          categoriesDisponibles: categoriesReduites
+        });
+
+        const extractedData = response.data;
+        setFormData(prev => ({ ...prev, ...extractedData }));
+
+        MySwal.fire({ 
+          icon: 'success', 
+          title: isEng ? 'Success' : 'Succès', 
+          text: isEng ? 'Receipt scanned successfully!' : 'Ticket analysé avec succès !', 
+          toast: true, position: 'top-end', timer: 2000, showConfirmButton: false 
+        });
+
+        parler(isEng 
+          ? `I scanned the receipt: ${extractedData.titre} for ${extractedData.montant} dirhams.`
+          : `J'ai scanné le ticket : ${extractedData.titre} pour ${extractedData.montant} dirhams.`
+        );
+
+      } catch (error) {
+        console.error(error);
+        MySwal.fire({ 
+          icon: 'error', 
+          title: isEng ? 'Error' : 'Erreur', 
+          text: isEng ? 'Could not read the receipt.' : 'Impossible de lire le ticket.' 
+        });
+      } finally {
+        setIsScanning(false);
+        if (fileInputRef.current) fileInputRef.current.value = ''; // Réinitialise l'input
+      }
+    };
+  };
 
   const todayString = new Date().toISOString().split('T')[0];
 
@@ -359,17 +413,44 @@ function Transactions() {
 
                   <div className="flex justify-between items-center mb-4 shrink-0">
                     <h2 className="text-xl font-bold text-slate-700 dark:text-blue-100">{t('transactions.newTitle', 'Nouvelle transaction')}</h2>
-                    <button
-                      type="button"
-                      onClick={handleVoiceInput}
-                      disabled={isProcessingVoice}
-                      className={`p-3 rounded-full transition-all shadow-md flex items-center justify-center
-                        ${isListening ? 'bg-rose-500 text-white animate-pulse' : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-cyan-400 hover:bg-blue-200'} 
-                        ${isProcessingVoice ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      title={t('transactions.voiceBtnTitle', 'Ajouter par la voix')}
-                    >
-                      <Mic size={20} className={isListening ? 'animate-bounce' : ''} />
-                    </button>
+                    
+                    <div className="flex items-center gap-3">
+                      {/* BOUTON CAMERA */}
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current.click()}
+                        disabled={isProcessingVoice || isScanning}
+                        className={`p-3 rounded-full transition-all shadow-md flex items-center justify-center
+                          ${isScanning ? 'bg-indigo-500 text-white animate-pulse' : 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200'}
+                          ${(isProcessingVoice || isScanning) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={isEng ? "Scan a receipt" : "Scanner un ticket"}
+                      >
+                        <Camera size={20} className={isScanning ? 'animate-bounce' : ''} />
+                      </button>
+
+                      {/* INPUT CACHÉ POUR LA CAMERA */}
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        capture="environment" 
+                        ref={fileInputRef}
+                        onChange={handleCaptureReceipt}
+                        className="hidden" 
+                      />
+
+                      {/* BOUTON VOCAL (EXISTANT) */}
+                      <button
+                        type="button"
+                        onClick={handleVoiceInput}
+                        disabled={isProcessingVoice || isScanning}
+                        className={`p-3 rounded-full transition-all shadow-md flex items-center justify-center
+                          ${isListening ? 'bg-rose-500 text-white animate-pulse' : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-cyan-400 hover:bg-blue-200'} 
+                          ${(isProcessingVoice || isScanning) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={t('transactions.voiceBtnTitle', 'Ajouter par la voix')}
+                      >
+                        <Mic size={20} className={isListening ? 'animate-bounce' : ''} />
+                      </button>
+                    </div>
                   </div>
 
                   {transcript && (
