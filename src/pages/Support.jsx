@@ -121,7 +121,7 @@ function Support() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{t('support.emailLabel', 'Email')}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">support@monbudget.dev</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">support@adawn.tech</p>
                       </div>
                     </a>
 
